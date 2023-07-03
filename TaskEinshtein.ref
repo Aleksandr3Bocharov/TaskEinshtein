@@ -125,52 +125,73 @@ Help {
 
 <Solve> == e.Table
 
-e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
-e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
-e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
-e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
-e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5) | 'Нет решения' | 'Много решений'
+e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Color ::= 'Жёлтый' | 'Синий' | 'Красный' | 'Зелёный' | 'Белый'
+e.Nationality ::= 'Норвежец' | 'Датчанин' | 'Англичанин' | 'Немец' | 'Швед'
+e.Cigarettes ::= 'Dunhill' | 'Rothmans' | 'Pall Mall' | 'Marlboro' | 'Winfield'
+e.Animal ::= 'Кошка' | 'Конь' | 'Птица' | 'Рыба' | 'Собака'
+e.Drink ::= 'Вода' | 'Чай' | 'Молоко' | 'Кофе' | 'Пиво'
 
 */
 Solve {
-  = ((Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода'))
-    ((Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай'))
-    ((Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко'))
-    ((Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе'))
-    ((Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво'))
+  = 'Нет решения'
 }
 
 /*
 
-<Answer e.Table> == 'Немец'
+<Answer e.Table> == e.Nationality | '<Нет решения>' | '<Много решений>'
 
-e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
-e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
-e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
-e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
-e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5) | 'Нет решения' | 'Много решений'
+e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Color ::= 'Жёлтый' | 'Синий' | 'Красный' | 'Зелёный' | 'Белый'
+e.Nationality ::= 'Норвежец' | 'Датчанин' | 'Англичанин' | 'Немец' | 'Швед'
+e.Cigarettes ::= 'Dunhill' | 'Rothmans' | 'Pall Mall' | 'Marlboro' | 'Winfield'
+e.Animal ::= 'Кошка' | 'Конь' | 'Птица' | 'Рыба' | 'Собака'
+e.Drink ::= 'Вода' | 'Чай' | 'Молоко' | 'Кофе' | 'Пиво'
 
 */
 Answer {
   e._ (e._ (Nationality e.Nationality) e._ (Animal 'Рыба') e._) e._ =
-    e.Nationality
+    e.Nationality;
+  'Нет решения' =
+    '<Нет решения>';
+  'Много решений' =
+    '<Много решений>'    
 }
 
 /*
 
 <PrintTable e.Table> ==
 
-e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
-e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
-e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
-e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
-e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5) | 'Нет решения' | 'Много решений'
+e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Color ::= 'Жёлтый' | 'Синий' | 'Красный' | 'Зелёный' | 'Белый'
+e.Nationality ::= 'Норвежец' | 'Датчанин' | 'Англичанин' | 'Немец' | 'Швед'
+e.Cigarettes ::= 'Dunhill' | 'Rothmans' | 'Pall Mall' | 'Marlboro' | 'Winfield'
+e.Animal ::= 'Кошка' | 'Конь' | 'Птица' | 'Рыба' | 'Собака'
+e.Drink ::= 'Вода' | 'Чай' | 'Молоко' | 'Кофе' | 'Пиво'
 
 */
 PrintTable {
+  'Нет решения' =
+    <Prout <RU 'Дом '  'Цвет    ' 'Национальность ' 'Сигареты  ' 'Животное ' 'Напиток'>>
+    <Prout <RU '<Нет решения>'>>;
+  'Много решений' =
+    <Prout <RU 'Дом '  'Цвет    ' 'Национальность ' 'Сигареты  ' 'Животное ' 'Напиток'>>
+    <Prout <RU '<Много решений>'>>;  
   e.Table =
     <Prout <RU 'Дом '  'Цвет    ' 'Национальность ' 'Сигареты  ' 'Животное ' 'Напиток'>>
     <Map
@@ -243,7 +264,13 @@ Format {
 
 $ENTRY Go {
   = <Help>
-    <Solve>: e.Table =
+    <Solve 
+      ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+      ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+      ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+      ((Home 4) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+      ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+    >: e.Table =
     <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n\n\n'>>
     <PrintTable e.Table>
 }
