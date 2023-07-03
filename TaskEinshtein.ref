@@ -121,6 +121,6 @@ Help {
 $ENTRY Go {
   = <Help>
     <Solve>: e.Table =
-    <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.'>>
+    <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
     <PrintTable e.Table>
 }
