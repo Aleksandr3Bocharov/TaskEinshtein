@@ -29,7 +29,7 @@ https://github.com/bmstu-iu9/refal-5-lambda
 Датчанин пьет чай.
 Зеленый дом стоит слева от белого.
 Обитатель зеленого дома пьет кофе.
-Человек, который курит Pallmall, держит птицу.
+Человек, который курит Pall Mall, держит птицу.
 Обитатель среднего дома пьет молоко.
 Обитатель желтого дома курит Dunhill.
 Норвежец живет в первом доме.
@@ -104,7 +104,7 @@ Help {
         'Датчанин пьет чай.\n'
         'Зеленый дом стоит слева от белого.\n'
         'Обитатель зеленого дома пьет кофе.\n'
-        'Человек, который курит Pallmall, держит птицу.\n'
+        'Человек, который курит Pall Mall, держит птицу.\n'
         'Обитатель среднего дома пьет молоко.\n'
         'Обитатель желтого дома курит Dunhill.\n'
         'Норвежец живет в первом доме.\n'
@@ -118,9 +118,47 @@ Help {
     >
 }
 
+/*
+
+<Solve> == e.Table
+
+e.Table ::= 
+
+*/
+Solve {
+  = ((Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода'))
+    ((Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай'))
+    ((Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко'))
+    ((Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе'))
+    ((Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво'))
+}
+
+/*
+
+<Answer e.Table> == 'Немец'
+
+e.Table ::=
+
+*/
+Answer {
+  e._ (e._ (Nationality e.Nationality) e._ (Animal 'Рыба') e._) e._ =
+    e.Nationality
+}
+
+/*
+
+<PrintTable e.Table> ==
+
+e.Table ::=
+
+*/
+PrintTable {
+  e.Table =
+}
+
 $ENTRY Go {
   = <Help>
     <Solve>: e.Table =
-    <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
+    <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n\n\n'>>
     <PrintTable e.Table>
 }
