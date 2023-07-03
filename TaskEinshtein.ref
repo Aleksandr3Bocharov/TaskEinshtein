@@ -42,6 +42,9 @@ https://github.com/bmstu-iu9/refal-5-lambda
 
 */
 
+*$FROM LibraryEx
+$EXTERN Map;
+
 /*
 
 <RU e.String> == e.String
@@ -122,7 +125,12 @@ Help {
 
 <Solve> == e.Table
 
-e.Table ::= 
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
+e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
+e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
+e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
+e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
 
 */
 Solve {
@@ -137,7 +145,12 @@ Solve {
 
 <Answer e.Table> == 'Немец'
 
-e.Table ::=
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
+e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
+e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
+e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
+e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
 
 */
 Answer {
@@ -149,11 +162,83 @@ Answer {
 
 <PrintTable e.Table> ==
 
-e.Table ::=
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+e.Home1 ::= (Home 1) (Color 'Жёлтый')   (Nationality 'Норвежец')   (Cigarettes 'Dunhill')   (Animal 'Кошка')  (Drink 'Вода')
+e.Home2 ::= (Home 2) (Color 'Синий')    (Nationality 'Датчанин')   (Cigarettes 'Rothmans')  (Animal 'Конь')   (Drink 'Чай')
+e.Home3 ::= (Home 3) (Color 'Красный')  (Nationality 'Англичанин') (Cigarettes 'Pall Mall') (Animal 'Птица')  (Drink 'Молоко')
+e.Home4 ::= (Home 4) (Color 'Зелёный')  (Nationality 'Немец')      (Cigarettes 'Marlboro')  (Animal 'Рыба')   (Drink 'Кофе')
+e.Home5 ::= (Home 5) (Color 'Белый')    (Nationality 'Швед')       (Cigarettes 'Winfield')  (Animal 'Собака') (Drink 'Пиво')
 
 */
 PrintTable {
   e.Table =
+    <Prout <RU 'Дом '  'Цвет    ' 'Национальность ' 'Сигареты  ' 'Животное ' 'Напиток'>>
+    <Map
+      {
+        (
+          (Home s.Home) (Color e.Color) (Nationality e.Nationality)
+          (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+        ) =
+          <Prout s.Home '  ' <RU <Format e.Color> <Format e.Nationality> <Format e.Cigarettes> <Format e.Animal> e.Drink>>
+      }     
+      e.Table
+    >
+    <Prout>
+}
+
+/*
+
+<Format e.Object> == e.Format
+
+e.Object ::= e.Color | e.Nationality | e.Cigarretes | e.Animal
+e.Color ::= 'Жёлтый' | 'Синий' | 'Красный' | 'Зелёный' | 'Белый'
+e.Nationality ::= 'Норвежец' | 'Датчанин' | 'Англичанин' | 'Немец' | 'Швед'
+e.Cigarettes ::= 'Dunhill' | 'Rothmans' | 'Pall Mall' | 'Marlboro' | 'Winfield'
+e.Animal ::= 'Кошка' | 'Конь' | 'Птица' | 'Рыба' | 'Собака'
+e.Format ::= e.Object ' ' ' '*
+
+*/
+Format {
+  'Жёлтый' =
+    'Жёлтый  ';
+  'Синий' =
+    'Синий   ';
+  'Красный' =
+    'Красный ';
+  'Зелёный' =
+    'Зелёный ';
+  'Белый' =
+    'Белый   ';     
+  'Норвежец' =
+    'Норвежец       '; 
+  'Датчанин' =
+    'Датчанин       ';  
+  'Англичанин' =
+    'Англичанин     ';
+  'Немец' =
+    'Немец          '; 
+  'Швед' =
+    'Швед           ';   
+  'Dunhill' =
+    'Dunhill   ';
+  'Rothmans' =
+    'Rothmans  ';
+  'Pall Mall' =
+    'Pall Mall ';
+  'Marlboro' =
+    'Marlboro  '; 
+  'Winfield' =
+    'Winfield  ';  
+  'Кошка' =
+    'Кошка    ';    
+  'Конь' =
+    'Конь     ';
+  'Птица' =
+    'Птица    '; 
+  'Рыба' =
+    'Рыба     ';
+  'Собака' =
+    'Собака   '                               
 }
 
 $ENTRY Go {
