@@ -181,7 +181,9 @@ Solve {
     <Solve e.Solve-B (15 e.Tables '=' Impossible)>;
   /* Переход к следующему правилу */  
   e.Solve-B (s.Rule e.Tables '=' e.Table) =
-    <ApplyRule <Inc s.Rule> e.Table>:
+    <Br RuleTables '='>
+    <ApplyRule <Inc s.Rule> e.Table>
+    <Dg RuleTables>:
     {
       (e.NewTable) e.RestNewTables =
         <Solve e.Solve-B (s.Rule e.Tables '=' e.Table) (<Inc s.Rule> e.RestNewTables '=' e.NewTable)>;
@@ -190,22 +192,31 @@ Solve {
     }      
 }
 
+/*
+
+<ApplyRule s.Rule e.Table> ==
+
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Color ::= Yellow | Blue | Red | Green | White | '???'
+e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
+e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
+e.Animal ::= Cat | Horse | Bird | Fish | Dog | '???'
+e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
+
+*/
 ApplyRule {
-  s.Rule s.UnifRule e.Table = <Legal <Try s.Rule s.UnifRule e.Table>>
+  1 e.Table-B (e.Home-B (Color e.Color) (Nationality e.Nationality) e.Home1-E) e.Table-E,
+  <Unify e.Color Red>: True, <Unify e.Nationality Englishman>: True,
+   =
+  1 e._ =
+    ;
 }
 
-Try {
-  1 1 (e.Home-B (Color '???') (Nationality '???') e.Home1-E) e.Table-E =
-    (e.Home-B (Color Red) (Nationality Englishman) e.Home1-E) e.Table-E;
-  1 1 (e.Home-B (Color Red) (Nationality '???') e.Home1-E) e.Table-E =
-    (e.Home-B (Color Red) (Nationality Englishman) e.Home1-E) e.Table-E;  
-  1 1 (e.Home-B (Color '???') (Nationality Englishman) e.Home1-E) e.Table-E =
-    (e.Home-B (Color Red) (Nationality Englishman) e.Home1-E) e.Table-E;  
-  1 1 (e.Home-B (Color Red) (Nationality Englishman) e.Home1-E) e.Table-E =
-    (e.Home-B (Color Red) (Nationality Englishman) e.Home1-E) e.Table-E;  
-  1 1 e._ =
-    Impossible;   
-}
 
 /*
 
