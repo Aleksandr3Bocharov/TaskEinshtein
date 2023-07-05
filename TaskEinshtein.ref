@@ -284,34 +284,7 @@ PrintSolve {
       e.Solve
     >: (s.Rule e._) =
       <Prout <RU 'Следующие подсказки не использовались при решении задачи:\n'>>
-      <PrintRules s.Rule 15>
-}
-
-/*
-
-<PrintRule s.Rule> ==
-
-s.Rule ::= s.NUMBER
-
-*/
-PrintRule {
-  s.Rule =
-    <Prout <RU 'Подсказка '> s.Rule ':'>
-}
-
-/*
-
-<PrintRules s.FirsrtRule s.LastRule> ==
-
-s.FirsrtRule s.LastRule ::= s.NUMBER
-
-*/
-PrintRules {
-  s.LastRule s.LastRule =
-    ;
-  s.FirsrtRule s.LastRule =  
-    <PrintRule s.FirsrtRule>
-    <PrintRules <Inc s.FirsrtRule> s.LastRule>
+      <PrintRules <Inc s.Rule> 16>
 }
 
 /*
@@ -361,7 +334,7 @@ e.Format ::= 'Жёлтый  ' | 'Синий   ' | 'Красный ' | 'Зелё�
   | 'Норвежец       '  | 'Датчанин       '  |  'Англичанин     ' | 'Немец          ' | 'Швед           '  |
   | 'Dunhill   ' | 'Rothmans  '  |  'Pall Mall ' | 'Marlboro  ' | 'Winfield  '  |
   | 'Кошка    ' | 'Конь     '  |  'Птица    ' | 'Рыба     ' | 'Собака   '  |
-  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '               '
+  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '?????????????? '
 
 */
 Format {
@@ -416,11 +389,80 @@ Format {
   Beer =
     'Пиво';
   '???' =
-    '               '  
+    '?????????????? '  
+}
+
+/*
+
+<PrintRules s.FirsrtRule s.LastRule> ==
+
+s.FirsrtRule s.LastRule ::= s.NUMBER
+
+*/
+PrintRules {
+  s.LastRule s.LastRule =
+    ;
+  s.FirsrtRule s.LastRule =  
+    <PrintRule s.FirsrtRule>
+    <PrintRules <Inc s.FirsrtRule> s.LastRule>
+}
+
+/*
+
+<PrintRule s.Rule> ==
+
+s.Rule ::= s.NUMBER
+
+*/
+PrintRule {
+  s.Rule =
+    <Prout <RU 'Подсказка № '> s.Rule>
+    <Prout <RU <RuleText s.Rule>>'\n'>
+}
+
+/*
+
+<RuleText s.Rule> ==
+
+s.Rule ::= s.NUMBER
+
+*/
+RuleText {
+  1 =
+    'Англичанин живет в красном доме.';
+  2 =
+    'У шведа есть собака.';
+  3 =
+    'Датчанин пьет чай.';
+  4 =
+    'Зеленый дом стоит слева от белого.';
+  5 =
+    'Обитатель зеленого дома пьет кофе.';
+  6 =
+    'Человек, который курит Pall Mall, держит птицу.';
+  7 =
+    'Обитатель среднего дома пьет молоко.';
+  8 =
+    'Обитатель желтого дома курит Dunhill.';
+  9 =
+    'Норвежец живет в первом доме.';
+  10 =
+    'Курильщик Marlboro живет возле того, у кого есть кошка.';
+  11 =
+    'Человек, у которого есть конь, живет возле того, кто курит Dunhill.';
+  12 =
+    'Курильщик Winfield пьет пиво.';
+  13 =
+    'Норвежец живет возле голубого дома.';
+  14 =
+    'Немец курит Rothmans.';
+  15 =
+    'Курильщик Marlboro живет по соседству с человеком, который пьет воду.'
 }
 
 $ENTRY Go {
   = <Help>
+    <Br Solves '='>
     <Solve 
       (0 '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
@@ -430,20 +472,22 @@ $ENTRY Go {
       ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       )
     >
-    <Cp Solves>:
+    <Dg Solves>:
     {
       =
         <Prout <RU 'Вопрос: Чья рыба? Ответ: Нет решения.'>>; 
       e.Solves = 
-        <Map
+        <MapAccum
           {
-            (e.Solve-B (s.Rule e.Tables '=' e.Table)) =
+            s.Solve (e.Solve-B (s.Rule e.Tables '=' e.Table)) =
+              <Prout <RU 'РЕШЕНИЕ № '> s.Solve '\n'>
               <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
               <PrintSolve e.Solve-B (s.Rule e.Tables '=' e.Table)>
               <Prout>
           }
+        1
         e.Solves
-        > 
+        >: s._ = 
     }
     
 }
