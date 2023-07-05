@@ -123,9 +123,9 @@ Help {
 
 /*
 
-<Solve e.Solve> == e.Solve
+<Solve e.Solve> == 
 
-e.Solve ::= (s.Rule e.Tables '=' e.Table)+ | Not_Exist
+e.Solve ::= (s.Rule e.Tables '=' e.Table)+
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
@@ -151,26 +151,34 @@ Solve {
     (Home 4) (Color s.Color4) (Nationality s.Nationality4) (Cigarettes s.Cigarettes4) (Animal s.Animal4) (Drink s.Drink4)
     (Home 5) (Color s.Color5) (Nationality s.Nationality5) (Cigarettes s.Cigarettes5) (Animal s.Animal5) (Drink s.Drink5)
   ) =
-    e.Solve-B
-    (s.Rule e.Tables '='
-      (Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1)
-      (Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2)
-      (Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3)
-      (Home 4) (Color s.Color4) (Nationality s.Nationality4) (Cigarettes s.Cigarettes4) (Animal s.Animal4) (Drink s.Drink4)
-      (Home 5) (Color s.Color5) (Nationality s.Nationality5) (Cigarettes s.Cigarettes5) (Animal s.Animal5) (Drink s.Drink5)
-    );
-  /* Нет решения */
+    <Rp Solves '='
+      <Cp Solves>
+      (
+        e.Solve-B
+        (
+          s.Rule e.Tables '='
+          (Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1)
+          (Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2)
+          (Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3)
+          (Home 4) (Color s.Color4) (Nationality s.Nationality4) (Cigarettes s.Cigarettes4) (Animal s.Animal4) (Drink s.Drink4)
+          (Home 5) (Color s.Color5) (Nationality s.Nationality5) (Cigarettes s.Cigarettes5) (Animal s.Animal5) (Drink s.Drink5)
+        )
+      )
+    >
+    <Solve e.Solve-B (s.Rule e.Tables '=' Impossible)>;
+  /* Поиск завершён */
   (0 '=' e._) (1 '=' Impossible) =
-    Not_Exist;
+    ;
   /* Возврат к предыдущему правилу */
   e.Solve-B (s.PrevRule e.Tables '=' e._) (s.Rule '=' Impossible) =
     <Solve e.Solve-B (s.PrevRule e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
   e.Solve-B (s.Rule (e.Table) e.RestTables '=' Impossible) =
     <Solve e.Solve-B (s.Rule e.RestTables '=' e.Table)>;
-  /* Поиск завершён */
+  /* Найдено неполное решение */
   e.Solve-B (15 e.Tables '=' e.Table) =
-    e.Solve-B (15 e.Tables '=' e.Table);
+    <Rp Solves '=' <Cp Solves> (e.Solve-B (15 e.Tables '=' e.Table))>
+    <Solve e.Solve-B (15 e.Tables '=' Impossible)>;
   /* Переход к следующему правилу */  
   e.Solve-B (s.Rule e.Tables '=' e.Table) =
     <ApplyRule <Inc s.Rule> e.Table>:
@@ -239,9 +247,9 @@ Answer {
 
 /*
 
-<PrintSolve e.Table> ==
+<PrintSolve e.Solve> ==
 
-e.Solve ::= (s.Rule e.Tables '=' e.Table)+ | Not_Exist
+e.Solve ::= (s.Rule e.Tables '=' e.Table)+
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
@@ -421,13 +429,21 @@ $ENTRY Go {
       ((Home 4) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       )
-    >: e.Solve:
+    >
+    <Cp Solves>:
     {
-      e.Solve-B (s.Rule e.Tables '=' e.Table) = 
-        <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n\n'>>
-        <PrintSolve e.Solve-B (s.Rule e.Tables '=' e.Table)>;
-      Not_Exist =
-        <Prout <RU 'Вопрос: Чья рыба? Ответ: Нет решения.'>>    
+      =
+        <Prout <RU 'Вопрос: Чья рыба? Ответ: Нет решения.'>>; 
+      e.Solves = 
+        <Map
+          {
+            (e.Solve-B (s.Rule e.Tables '=' e.Table)) =
+              <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
+              <PrintSolve e.Solve-B (s.Rule e.Tables '=' e.Table)>
+              <Prout>
+          }
+        e.Solves
+        > 
     }
     
 }
