@@ -210,13 +210,79 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
 ApplyRule {
-  1 e.Table-B (e.Home-B (Color e.Color) (Nationality e.Nationality) e.Home1-E) e.Table-E,
-  <Unify e.Color Red>: True, <Unify e.Nationality Englishman>: True,
-   =
+  1 e.Table-B (e.Home-B (Color Red) (Nationality e.Nationality) e.Home-E) e.Table-E,
+  <notExist (Nationality Englishman) e.Table-B e.Table-E>:
+  {
+     True,
+     <CanUnified e.Nationality Englishman>:
+     {
+        True =
+          <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;
+        s._ =
+     };
+     s._ =
+  };   
+  1 e.Table-B (e.Home-B (Color e.Color) (Nationality Englishman) e.Home-E) e.Table-E,
+  <CanUnified e.Color Red>:
+  {
+    True =
+      <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;
+    s._ =
+  };
+  1 e.Table-B (e.Home-B (Color '???') (Nationality '???') e.Home-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>: False =
+    ;
   1 e._ =
     ;
 }
 
+/*
+
+<notExist t.Object e.Table> == True | False
+
+t.Object ::= (Color s.Color) | (Nationality s.Nationality) | (Cigarettes s.Cigarettes) | (Animal s.Animal) | (Drink s.Drink) 
+e.Table ::= (e.Home)*
+e.Home ::= (Home s.Home) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+s.Home ::= 1..5
+e.Color ::= s.Color | '???'
+s.Color ::= Yellow | Blue | Red | Green | White
+e.Nationality ::= s.Nationality | '???'
+s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
+e.Cigarettes ::= s.Cigarettes | '???'
+s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+e.Animal ::= s.Animal | '???'
+s.Animal ::= Cat | Horse | Bird | Fish | Dog
+e.Drink ::= s.Drink | '???'
+s.Drink ::= Water | Tea | Milk | Coffee | Beer
+
+*/
+notExist {
+  t.Object e.Table =
+    
+}
+
+/*
+
+<CanUnified e.Object s.Object> == True | False
+
+e.Object ::= s.Object | '???'
+s.Object ::= s.Color | s.Nationality | s.Cigarretes | s.Animal | s.Drink 
+s.Color ::= Yellow | Blue | Red | Green | White
+s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
+s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+s.Animal ::= Cat | Horse | Bird | Fish | Dog
+s.Drink ::= Water | Tea | Milk | Coffee | Beer
+
+*/
+
+CanUnified {
+  s.Object s.Object =
+    True;
+  '???' s.Object =
+    True;
+  e._ =
+    False    
+}
 
 /*
 
@@ -335,12 +401,12 @@ PrintTable {
 
 <Format e.Object> == e.Format
 
-e.Object ::= e.Color | e.Nationality | e.Cigarretes | e.Animal | e.Drink
-e.Color ::= Yellow | Blue | Red | Green | White | '???'
-e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
-e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
-e.Animal ::= Cat | Horse | Bird | Fish | Dog | '???'
-e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
+e.Object ::= s.Color | s.Nationality | s.Cigarretes | s.Animal | s.Drink | '???'
+s.Color ::= Yellow | Blue | Red | Green | White
+s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
+s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
+s.Animal ::= Cat | Horse | Bird | Fish | Dog
+s.Drink ::= Water | Tea | Milk | Coffee | Beer
 e.Format ::= 'Жёлтый  ' | 'Синий   ' | 'Красный ' | 'Зелёный ' | 'Белый   ' |
   | 'Норвежец       '  | 'Датчанин       '  |  'Англичанин     ' | 'Немец          ' | 'Швед           '  |
   | 'Dunhill   ' | 'Rothmans  '  |  'Pall Mall ' | 'Marlboro  ' | 'Winfield  '  |
