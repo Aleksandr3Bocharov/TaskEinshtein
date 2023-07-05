@@ -178,7 +178,7 @@ Solve {
       (e.NewTable) e.RestNewTables =
         <Solve e.Solve-B (s.Rule e.Tables '=' e.Table) (<Inc s.Rule> e.RestNewTables '=' e.NewTable)>;
       =
-        e.Solve-B (s.Rule e.Tables '=' Impossible)
+        <Solve e.Solve-B (s.Rule e.Tables '=' Impossible)>
     }      
 }
 
@@ -276,7 +276,7 @@ PrintSolve {
       e.Solve
     >: (s.Rule e._) =
       <Prout <RU 'Следующие подсказки не использовались при решении задачи:\n'>>
-      <PrintOtherRules s.Rule 15>
+      <PrintRules s.Rule 15>
 }
 
 /*
@@ -289,6 +289,21 @@ s.Rule ::= s.NUMBER
 PrintRule {
   s.Rule =
     <Prout <RU 'Подсказка '> s.Rule ':'>
+}
+
+/*
+
+<PrintRules s.FirsrtRule s.LastRule> ==
+
+s.FirsrtRule s.LastRule ::= s.NUMBER
+
+*/
+PrintRules {
+  s.LastRule s.LastRule =
+    ;
+  s.FirsrtRule s.LastRule =  
+    <PrintRule s.FirsrtRule>
+    <PrintRules <Inc s.FirsrtRule> s.LastRule>
 }
 
 /*
@@ -321,7 +336,7 @@ PrintTable {
       }     
       e.Table
     >
-    <Prout '\n'>
+    <Prout>
 }
 
 /*
@@ -409,7 +424,7 @@ $ENTRY Go {
     >: e.Solve:
     {
       e.Solve-B (s.Rule e.Tables '=' e.Table) = 
-        <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n\n\n'>>
+        <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n\n'>>
         <PrintSolve e.Solve-B (s.Rule e.Tables '=' e.Table)>;
       Not_Exist =
         <Prout <RU 'Вопрос: Чья рыба? Ответ: Нет решения.'>>    
