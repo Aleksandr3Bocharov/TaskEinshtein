@@ -16,7 +16,7 @@ https://github.com/bmstu-iu9/refal-5-lambda
 Задача Эйнштейна.
 
 Условия:
-1. Есть 5 домов.
+1. Есть 5 домов разных цветов.
 2. В каждом доме живет по одному человеку отличающегося от другого по национальности.
 3. Каждый обитатель пьет только один определенный напиток, курит определенную марку сигарет и держит животное.
 4. Никто из пяти людей не пьет одинакового напитка, не курит одинаковые сигареты и не держит одинаковых животных.
@@ -97,7 +97,7 @@ Help {
         '\nРешение задачи Эйнштейна на Рефал-5 Лямбда.\n\n'
         'Задача Эйнштейна.\n\n'
         'Условия:\n'
-        '1. Есть 5 домов.\n'
+        '1. Есть 5 домов разных цветов.\n'
         '2. В каждом доме живет по одному человеку отличающегося от другого по национальности.\n'
         '3. Каждый обитатель пьет только один определенный напиток, курит определенную марку сигарет и держит животное.\n'
         '4. Никто из пяти людей не пьет одинакового напитка, не курит одинаковые сигареты и не держит одинаковых животных.\n\n'
@@ -126,9 +126,12 @@ Help {
 
 <Solve e.Solve> == 
 
-e.Solve ::= (s.Rule e.Tables '=' e.Table)+
+e.Solve ::= (s.Rule (e.Rules) e.Tables '=' e.exTable)+
+
+e.Rules ::= s.Rule*
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
+e.exTable ::= e.Table | Impossible
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
 e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
 e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
@@ -145,7 +148,7 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 Solve {
   /* Найдено решение */
   e.Solve-B
-  (s.Rule e.Tables '=' 
+  (s.Rule (e.Rules) e.Tables '=' 
     (Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1)
     (Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2)
     (Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3)
@@ -157,7 +160,7 @@ Solve {
       (
         e.Solve-B
         (
-          s.Rule e.Tables '='
+          s.Rule (e.Rules) e.Tables '='
           (Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1)
           (Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2)
           (Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3)
@@ -166,30 +169,30 @@ Solve {
         )
       )
     >
-    <Solve e.Solve-B (s.Rule e.Tables '=' Impossible)>;
+    <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>;
   /* Поиск завершён */
-  (0 '=' Impossible) =
+  (0 (e._) '=' Impossible) =
     ;
   /* Возврат к предыдущему правилу */
-  e.Solve-B (s.PrevRule e.Tables '=' e._) (s.Rule '=' Impossible) =
-    <Solve e.Solve-B (s.PrevRule e.Tables '=' Impossible)>;
+  e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e._) (s.Rule (e._) '=' Impossible) =
+    <Solve e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
-  e.Solve-B (s.Rule (e.Table) e.RestTables '=' Impossible) =
-    <Solve e.Solve-B (s.Rule e.RestTables '=' e.Table)>;
+  e.Solve-B (s.Rule (e.Rules) (e.Table) e.RestTables '=' Impossible) =
+    <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
   /* Найдено неполное решение */
-  e.Solve-B (4 e.Tables '=' e.Table) =
-    <Rp Solves '=' <Cp Solves> (e.Solve-B (4 e.Tables '=' e.Table))>
-    <Solve e.Solve-B (4 e.Tables '=' Impossible)>;
+  e.Solve-B (s.Rule () e.Tables '=' e.Table) =
+    <Rp Solves '=' <Cp Solves> (e.Solve-B (s.Rule () e.Tables '=' e.Table))>
+    <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>;
   /* Переход к следующему правилу */  
-  e.Solve-B (s.Rule e.Tables '=' e.Table) =
+  e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) =
     <Br RuleTables '='>
-    <ApplyRule <Inc s.Rule> e.Table>
+    <ApplyRule s.NextRule e.Table>
     <Dg RuleTables>:
     {
       (e.NewTable) e.RestNewTables =
-        <Solve e.Solve-B (s.Rule e.Tables '=' e.Table) (<Inc s.Rule> e.RestNewTables '=' e.NewTable)>;
+        <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) (s.NextRule (e.RestRules) e.RestNewTables '=' e.NewTable)>;
       =
-        <Solve e.Solve-B (s.Rule e.Tables '=' Impossible)>
+        <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' Impossible)>
     }      
 }
 
@@ -197,6 +200,7 @@ Solve {
 
 <ApplyRule s.Rule e.Table> ==
 
+s.Rule ::= s.NUMBER
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
 e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
 e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
@@ -220,8 +224,12 @@ ApplyRule {
     ; 
   1 e.Table-B (e.Home-B (Color Red) (Nationality '???') e.Home-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;  
+  1 e._ (e._ (Color Red) (Nationality s._) e._) e._ =
+    ;    
   1 e.Table-B (e.Home-B (Color '???') (Nationality Englishman) e.Home-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;
+  1 e._ (e._ (Color s._) (Nationality Englishman) e._) e._ =
+    ;  
   1 e.Table-B (e.Home-B (Color '???') (Nationality '???') e.Home-E) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>: False =
     ;
@@ -235,9 +243,13 @@ ApplyRule {
   <Exist (Nationality Shwed) e.Table>: True =
     ; 
   2 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal Dog) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;  
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>; 
+  2 e._ (e._ (Nationality s._) e._ (Animal Dog) e._) e._ =
+    ;     
   2 e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal '???') e.Home-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;
+  2 e._ (e._ (Nationality Shwed) e._ (Animal s._) e._) e._ =
+    ;  
   2 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal '???') e.Home-E) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>: False =
     ;
@@ -251,9 +263,13 @@ ApplyRule {
   <Exist (Nationality Danish) e.Table>: True =
     ; 
   3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink Tea)) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;  
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;
+  3 e._ (e._ (Nationality s._) e._ (Drink Tea)) e._ =
+    ;    
   3 e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink '???')) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;
+  3 e._ (e._ (Nationality Danish) e._ (Drink s._)) e._ =
+    ;  
   3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink '???')) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>: False =
     ;
@@ -268,83 +284,38 @@ ApplyRule {
     ; 
   4 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;  
+  4 e._ (e._ (Color s._) e._) (e._ (Color White) e._) e._ =
+    ;    
   4 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;
+  4 e._ (e._ (Color Green) e._) (e._ (Color s._) e._) e._ =
+    ;
   4 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>: False =
     ;
   4 e._ =
     ;     
-}
-
-/*
-ApplyRule {
-* 1.  Англичанин живет в красном доме.
-  2 e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;   
-  2 e.Table,
-  <Exist (Color Red) e.Table>: True,
-  <Exist (Nationality Englishman) e.Table>: True =
-    ; 
-  2 e.Table-B (e.Home-B (Color Red) (Nationality '???') e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;  
-  2 e.Table-B (e.Home-B (Color '???') (Nationality Englishman) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;
-  2 e.Table-B (e.Home-B (Color '???') (Nationality '???') e.Home-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>: False =
-    ;
-  2 e._ =
-    ;
-* 2. У шведа есть собака.  
-  3 e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;   
-  3 e.Table,
-  <Exist (Animal Dog) e.Table>: True,
-  <Exist (Nationality Shwed) e.Table>: True =
-    ; 
-  3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal Dog) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;  
-  3 e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal '???') e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;
-  3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal '???') e.Home-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>: False =
-    ;
-  3 e._ =
-    ;  
-* 3. Датчанин пьет чай.  
-  4 e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;   
-  4 e.Table,
-  <Exist (Drink Tea) e.Table>: True,
-  <Exist (Nationality Danish) e.Table>: True =
-    ; 
-  4 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink Tea)) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;  
-  4 e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink '???')) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;
-  4 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink '???')) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>: False =
-    ;
-  4 e._ =
-    ;  
-* 4. Зеленый дом стоит слева от белого.  
-  1 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
-   <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;   
-  1 e.Table,
+  /* 5.  Обитатель зеленого дома пьет кофе. */
+  5 e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E)>;   
+  5 e.Table,
   <Exist (Color Green) e.Table>: True,
-  <Exist (Color White) e.Table>: True =
+  <Exist (Drink Coffee) e.Table>: True =
     ; 
-  1 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;  
-  1 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;
-  1 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>: False =
+  5 e.Table-B (e.Home-B (Color Green) e.Home-M (Drink '???')) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E)>;  
+  5 e._ (e._ (Color Green) e._ (Drink s._)) e._ =
+    ;    
+  5 e.Table-B (e.Home-B (Color '???') e.Home-M (Drink Coffee)) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E)>;
+  5 e._ (e._ (Color s._) e._ (Drink Coffee)) e._ =
+    ;  
+  5 e.Table-B (e.Home-B (Color '???') e.Home-M (Drink '???')) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E)>: False =
     ;
-  1 e._ =
-    ;     
+  5 e._ =
+    ;  
 }
-*/
 
 /*
 
@@ -442,7 +413,9 @@ Answer-Aux {
 
 <PrintSolve e.Solve> ==
 
-e.Solve ::= (s.Rule e.Tables '=' e.Table)+
+e.Solve ::= (s.Rule (e.Rules) e.Tables '=' e.Table)+
+
+s.Rules ::= s.Rule*
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
@@ -462,18 +435,23 @@ PrintSolve {
   e.Solve =
     <MapAccum
       {
-        (s._ e.PrevTable)
-        (s.Rule e._ '=' e.Table) =
-          (s.Rule e.Table)
+        (s._ (e._) e.PrevTable)
+        (s.Rule (e.Rules) e._ '=' e.Table) =
+          (s.Rule (e.Rules) e.Table)
           <PrintRule s.Rule>
           <PrintTableCompare (e.PrevTable) (e.Table)>
           <PrintTable e.Table>
       }
-      (0)     
+      (0 ())     
       e.Solve
-    >: (s.Rule e._) =
-      <Prout <RU 'Следующие подсказки не использовались при решении задачи:\n'>>
-      <PrintRules <Inc s.Rule> 16>
+    >:
+    {
+      (s._ () e._) =
+        ;
+      (s._ (e.Rules) e._) =
+        <Prout <RU 'Следующие подсказки не использовались при решении задачи:\n'>>
+        <PrintRules e.Rules>
+    }    
 }
 
 /*
@@ -606,17 +584,17 @@ Format {
 
 /*
 
-<PrintRules s.FirsrtRule s.LastRule> ==
+<PrintRules e.Rules> ==
 
-s.FirsrtRule s.LastRule ::= s.NUMBER
+e.Rules ::= s.NUMBER*
 
 */
 PrintRules {
-  s.LastRule s.LastRule =
+  =
     ;
-  s.FirsrtRule s.LastRule =  
-    <PrintRule s.FirsrtRule>
-    <PrintRules <Inc s.FirsrtRule> s.LastRule>
+  s.Rule e.RestRules =  
+    <PrintRule s.Rule>
+    <PrintRules e.RestRules>
 }
 
 /*
@@ -684,7 +662,7 @@ $ENTRY Go {
   = <Help>
     <Br Solves '='>
     <Solve 
-      (0 '='
+      (0 (1 2 3 4 5) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
@@ -700,11 +678,11 @@ $ENTRY Go {
         <MapAccum
           {
             s.Solve 
-            (e.Solve-B (s.Rule e.Tables '=' e.Table)) =
+            (e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table)) =
               <Inc s.Solve>
               <Prout <RU 'РЕШЕНИЕ '> s.Solve '\n'>
               <Prout <RU 'Вопрос: Чья рыба? Ответ: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
-              <PrintSolve e.Solve-B (s.Rule e.Tables '=' e.Table)>
+              <PrintSolve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table)>
               <Prout>
           }
           1
