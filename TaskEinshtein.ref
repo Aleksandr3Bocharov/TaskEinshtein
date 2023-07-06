@@ -175,14 +175,17 @@ Solve {
     ;
   /* Возврат к предыдущему правилу */
   e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e._) (s.Rule (e._) '=' Impossible) =
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
   e.Solve-B (s.Rule (e.Rules) (e.Table) e.RestTables '=' Impossible) =
+    <Rp Steps '=' <Inc <Cp Steps>>>
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
   /* Найдено неполное решение */
   e.Solve-B (s.Rule () e.Tables '=' e.Table) =
     <Rp Solves '=' <Cp Solves> (e.Solve-B (s.Rule () e.Tables '=' e.Table))>
-    <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>;
+    <Solve e.Solve-B (s.Rule () e.Tables '=' Impossible)>;
   /* Переход к следующему правилу */  
   e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) =
     <Br RuleTables '='>
@@ -190,6 +193,8 @@ Solve {
     <Dg RuleTables>:
     {
       (e.NewTable) e.RestNewTables =
+        <Rp Steps '=' <Inc <Cp Steps>>>
+        <Rp StepsBack '=' <Inc <Cp StepsBack>>>
         <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) (s.NextRule (e.RestRules) e.RestNewTables '=' e.NewTable)>;
       =
         <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' Impossible)>
@@ -295,7 +300,7 @@ ApplyRule {
     ;
   4 e._ =
     ;     
-  /* 5.  Обитатель зеленого дома пьет кофе. */
+  /* 5. Обитатель зеленого дома пьет кофе. */
   5 e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Green) e.Home-M (Drink Coffee)) e.Table-E)>;   
   5 e.Table,
@@ -315,6 +320,26 @@ ApplyRule {
     ;
   5 e._ =
     ;  
+  /* 6. Человек, который курит Pall Mall, держит птицу. */
+  6 e.Table-B (e.Home-B (Cigarettes PallMall) (Animal Bird) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Cigarettes PallMall) (Animal Bird) e.Home-E) e.Table-E)>;   
+  6 e.Table,
+  <Exist (Cigarettes PallMall) e.Table>: True,
+  <Exist (Animal Bird) e.Table>: True =
+    ; 
+  6 e.Table-B (e.Home-B (Cigarettes PallMall) (Animal '???') e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Cigarettes PallMall) (Animal Bird) e.Home-E) e.Table-E)>;  
+  6 e._ (e._ (Cigarettes PallMall) (Animal s._) e._) e._ =
+    ;    
+  6 e.Table-B (e.Home-B (Cigarettes '???') (Animal Bird) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Cigarettes PallMall) (Animal Bird) e.Home-E) e.Table-E)>;
+  6 e._ (e._ (Cigarettes s._) (Animal Bird) e._) e._ =
+    ;  
+  6 e.Table-B (e.Home-B (Cigarettes '???') (Animal '???') e.Home-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Cigarettes PallMall) (Animal Bird) e.Home-E) e.Table-E)>: False =
+    ;
+  6 e._ =
+    ; 
 }
 
 /*
@@ -524,7 +549,7 @@ e.Format ::= 'Жёлтый         ' | 'Синий          ' | 'Красный 
   | 'Норвежец       ' | 'Датчанин       '  |  'Англичанин     ' | 'Немец          ' | 'Швед           '  |
   | 'Dunhill        ' | 'Rothmans       '  |  'Pall Mall      ' | 'Marlboro       ' | 'Winfield       '  |
   | 'Кошка          ' | 'Конь           '  |  'Птица          ' | 'Рыба           ' | 'Собака         '  |
-  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '?????????????? '
+  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '?              '
 
 */
 Format {
@@ -579,7 +604,7 @@ Format {
   Beer =
     'Пиво';
   '???' =
-    '?????????????? '  
+    '?              '  
 }
 
 /*
@@ -621,7 +646,12 @@ e.RuleText ::= 'Англичанин живет в красном доме.' | '
   | 'Норвежец живет в первом доме.' | 'Курильщик Marlboro живет возле того, у кого есть кошка.' |
   | 'Человек, у которого есть конь, живет возле того, кто курит Dunhill.' | 'Курильщик Winfield пьет пиво.' |
   | 'Норвежец живет возле голубого дома.' | 'Немец курит Rothmans.' | 
-  | 'Курильщик Marlboro живет по соседству с человеком, который пьет воду.' | '<Нет текста>'
+  | 'Курильщик Marlboro живет по соседству с человеком, который пьет воду.' | 
+  | 'Условия:\n'
+    '1. Есть 5 домов разных цветов.\n'
+    '2. В каждом доме живет по одному человеку отличающегося от другого по национальности.\n'
+    '3. Каждый обитатель пьет только один определенный напиток, курит определенную марку сигарет и держит животное.\n'
+    '4. Никто из пяти людей не пьет одинакового напитка, не курит одинаковые сигареты и не держит одинаковых животных.'
 
 */
 RuleText {
@@ -655,14 +685,22 @@ RuleText {
     'Немец курит Rothmans.';
   15 =
     'Курильщик Marlboro живет по соседству с человеком, который пьет воду.';
-  s._ = '<Нет текста>' 
+  s._ = 
+    'Условия:\n'
+    '1. Есть 5 домов разных цветов.\n'
+    '2. В каждом доме живет по одному человеку отличающегося от другого по национальности.\n'
+    '3. Каждый обитатель пьет только один определенный напиток, курит определенную марку сигарет и держит животное.\n'
+    '4. Никто из пяти людей не пьет одинакового напитка, не курит одинаковые сигареты и не держит одинаковых животных.' 
 }
 
 $ENTRY Go {
   = <Help>
     <Br Solves '='>
-    <Solve 
-      (0 (1 2 3 4 5) '='
+    <Br Steps '=' 0>
+    <Br StepsBack '=' 0>
+    <Solve
+* 4 5 1 3 2 6 optimum       
+      (0 (4 5 1 3 2 6) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
@@ -688,6 +726,8 @@ $ENTRY Go {
           1
           e.Solves
         >: s._ = 
+        <Prout <RU 'Количество шагов: '> <Dg Steps>>
+        <Prout <RU 'Количество шагов с возвратом: '> <Dg StepsBack>>
     }
     
 }
