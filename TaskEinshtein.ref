@@ -278,6 +278,75 @@ ApplyRule {
 }
 
 /*
+ApplyRule {
+* 1.  Англичанин живет в красном доме.
+  2 e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;   
+  2 e.Table,
+  <Exist (Color Red) e.Table>: True,
+  <Exist (Nationality Englishman) e.Table>: True =
+    ; 
+  2 e.Table-B (e.Home-B (Color Red) (Nationality '???') e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;  
+  2 e.Table-B (e.Home-B (Color '???') (Nationality Englishman) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>;
+  2 e.Table-B (e.Home-B (Color '???') (Nationality '???') e.Home-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Color Red) (Nationality Englishman) e.Home-E) e.Table-E)>: False =
+    ;
+  2 e._ =
+    ;
+* 2. У шведа есть собака.  
+  3 e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;   
+  3 e.Table,
+  <Exist (Animal Dog) e.Table>: True,
+  <Exist (Nationality Shwed) e.Table>: True =
+    ; 
+  3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal Dog) e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;  
+  3 e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal '???') e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>;
+  3 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Animal '???') e.Home-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Shwed) e.Home-M (Animal Dog) e.Home-E) e.Table-E)>: False =
+    ;
+  3 e._ =
+    ;  
+* 3. Датчанин пьет чай.  
+  4 e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;   
+  4 e.Table,
+  <Exist (Drink Tea) e.Table>: True,
+  <Exist (Nationality Danish) e.Table>: True =
+    ; 
+  4 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink Tea)) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;  
+  4 e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink '???')) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>;
+  4 e.Table-B (e.Home-B (Nationality '???') e.Home-M (Drink '???')) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Nationality Danish) e.Home-M (Drink Tea)) e.Table-E)>: False =
+    ;
+  4 e._ =
+    ;  
+* 4. Зеленый дом стоит слева от белого.  
+  1 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
+   <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;   
+  1 e.Table,
+  <Exist (Color Green) e.Table>: True,
+  <Exist (Color White) e.Table>: True =
+    ; 
+  1 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;  
+  1 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;
+  1 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>: False =
+    ;
+  1 e._ =
+    ;     
+}
+*/
+
+/*
 
 <Exist t.Object e.Table> == True | False
 
