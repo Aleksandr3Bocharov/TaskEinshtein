@@ -290,11 +290,15 @@ ApplyRule {
   4 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;  
   4 e._ (e._ (Color s._) e._) (e._ (Color White) e._) e._ =
-    ;    
+    ;
+  4 (e._ (Color White) e._) e._ =
+    ;      
   4 e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E =
     <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>;
   4 e._ (e._ (Color Green) e._) (e._ (Color s._) e._) e._ =
     ;
+  4 e._ (e._ (Color Green) e._) =
+    ;  
   4 e.Table-B (e.HomeL-B (Color '???') e.HomeL-E) (e.HomeR-B (Color '???') e.HomeR-E) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Color Green) e.HomeL-E) (e.HomeR-B (Color White) e.HomeR-E) e.Table-E)>: False =
     ;
@@ -382,24 +386,45 @@ ApplyRule {
     ;   
   /* 10. Курильщик Marlboro живет возле того, у кого есть кошка. */  
   10 e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E =
-   <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>;   
+   <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E   ) e.Table-E)>;
+  10 e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E) e.Table-E =
+   <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E   ) e.Table-E)>; 
   10 e.Table,
   <Exist (Cigarettes Marlboro) e.Table>: True,
   <Exist (Animal Cat) e.Table>: True =
     ; 
   10 e.Table-B (e.HomeL-B (Cigarettes '???') e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>;  
-  10 e._ (e._ (Cigarettes s._) e._) (e._ (Animal Cat) e._) e._ =
-    ;    
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>
+    <ApplyRule 10R e.Table-B (e.HomeL-B (Cigarettes '???') e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E>;  
+  10 e.Table-B (e.HomeL-B (Cigarettes s.Cigarettes) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E =
+    <ApplyRule 10R e.Table-B (e.HomeL-B (Cigarettes s.Cigarettes) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E>;
+  10 (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E =
+    <ApplyRule 10R (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E>;   
   10 e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal '???') e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>;
-  10 e._ (e._ (Cigarettes Marlboro) e._) (e._ (Animal s._) e._) e._ =
-    ;
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>
+    <ApplyRule 10R e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal '???') e.HomeR-E) e.Table-E>;
+  10 e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal s.Animal) e.HomeR-E) e.Table-E =
+    <ApplyRule 10R e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal s.Animal) e.HomeR-E) e.Table-E>;
   10 e.Table-B (e.HomeL-B (Cigarettes '???') e.HomeL-E) (e.HomeR-B (Animal '???') e.HomeR-E) e.Table-E,
   <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Cigarettes Marlboro) e.HomeL-E) (e.HomeR-B (Animal Cat) e.HomeR-E) e.Table-E)>: False =
     ;
-  10 e._ =
-    ;     
+  10 e.Table =
+    <ApplyRule 10R e.Table>; 
+  10R e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes '???') e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E) e.Table-E)>; 
+  10R e._ (e._ (Animal Cat) e._) (e._ (Cigarettes s._) e._) e._ =
+    ;
+  10R e._ (e._ (Animal Cat) e._) =
+    ;         
+  10R e.Table-B (e.HomeL-B (Animal '???') e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E) e.Table-E)>;
+  10R e._ (e._ (Animal s._) e._) (e._ (Cigarettes Marlboro) e._) e._ =
+    ;    
+  10R e.Table-B (e.HomeL-B (Animal '???') e.HomeL-E) (e.HomeR-B (Cigarettes '???') e.HomeR-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (Animal Cat) e.HomeL-E) (e.HomeR-B (Cigarettes Marlboro) e.HomeR-E) e.Table-E)>: False =
+    ;
+  10R e._ =
+    ;  
   /* 11. Человек, у которого есть конь, живет возле того, кто курит Dunhill. */  
  
   /* 12. Курильщик Winfield пьет пиво. */
@@ -785,7 +810,7 @@ $ENTRY Go {
     <Solve
 * 1 2 3 4 5 6 7 8 9 10 11 12 13 nonoptimum      
 * 7 9 13 4 5 1 8 11 2 3 12 6 10 optimum       
-      (0 (1 2 3 4 5 6 7 8 9 12 11) '='
+      (0 (1 2 3 4 5 6 7 8 9) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
