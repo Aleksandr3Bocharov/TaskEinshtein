@@ -148,7 +148,7 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 Solve {
   /* Найдено решение */
   e.Solve-B
-  (s.Rule () e.Tables '=' 
+  (16 () '=' 
     ((Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1))
     ((Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2))
     ((Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3))
@@ -160,7 +160,7 @@ Solve {
       (
         e.Solve-B
         (
-          s.Rule () e.Tables '='
+          16 () '='
           ((Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1))
           ((Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2))
           ((Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3))
@@ -169,7 +169,7 @@ Solve {
         )
       )
     >
-    <Solve e.Solve-B (s.Rule () e.Tables '=' Impossible)>;  
+    <Solve e.Solve-B (16 () '=' Impossible)>;  
   /* Поиск завершён */
   (0 (e._) '=' Impossible) =
     ;
@@ -182,6 +182,11 @@ Solve {
     <Rp Steps '=' <Inc <Cp Steps>>>
     <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
+  /* Все подсказки применены */
+  e.Solve-B (s.Rule () e.Tables '=' e.Table) =
+    <Rp Steps '=' <Inc <Cp Steps>>>
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
+    <Solve e.Solve-B (s.Rule () e.Tables '=' e.Table) (16 () '=' <ApplyRule 16 e.Table>)>;  
   /* Переход к следующему правилу */  
   e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) =
     <Br RuleTables '='>
@@ -601,13 +606,8 @@ ApplyRule {
   R15 e._ = 
     ;
   /* 16. Рыба - пятое животное. */
-  16 e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E>;
-  16 e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E)>: False =
-    ;
-  16 e._ = 
-    ;  
+  16 e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E =
+    (e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E)
 }
 
 /*
@@ -897,9 +897,9 @@ $ENTRY Go {
     <Br Steps '=' 0>
     <Br StepsBack '=' 0>
     <Solve
-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 nonoptimum      
-* 7 9 13 4 5 1 8 11 2 3 14 12 6 10 15 16 optimum       
-      (0 (7 9 13 4 5 1 8 11 2 3 14 12 6 10 15 16) '='
+* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 nonoptimum      
+* 7 9 13 4 5 1 8 11 2 3 14 12 6 10 15 optimum       
+      (0 (7 9 13 4 5 1 8 11 2 3 14 12 6 10 15) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
