@@ -43,7 +43,7 @@ https://github.com/bmstu-iu9/refal-5-lambda
 */
 
 *$FROM LibraryEx
-$EXTERN Map, MapAccum, Inc, Trim;
+$EXTERN Map, MapAccum, Inc, Trim, Min;
 
 /*
 
@@ -124,7 +124,7 @@ Help {
 
 /*
 
-<Solve e.Solve> == 
+<Solve e.Solve> == e.Solve
 
 e.Solve ::= (s.Rule (e.Rules) e.Tables '=' e.exTable)+
 
@@ -146,33 +146,6 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
 Solve {
-  /* Найдено решение */
-  e.Solve-B
-  (16 () '=' 
-    ((Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1))
-    ((Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2))
-    ((Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3))
-    ((Home 4) (Color s.Color4) (Nationality s.Nationality4) (Cigarettes s.Cigarettes4) (Animal s.Animal4) (Drink s.Drink4))
-    ((Home 5) (Color s.Color5) (Nationality s.Nationality5) (Cigarettes s.Cigarettes5) (Animal s.Animal5) (Drink s.Drink5))
-  ) =
-    <Rp Solves '='
-      <Cp Solves>
-      (
-        e.Solve-B
-        (
-          16 () '='
-          ((Home 1) (Color s.Color1) (Nationality s.Nationality1) (Cigarettes s.Cigarettes1) (Animal s.Animal1) (Drink s.Drink1))
-          ((Home 2) (Color s.Color2) (Nationality s.Nationality2) (Cigarettes s.Cigarettes2) (Animal s.Animal2) (Drink s.Drink2))
-          ((Home 3) (Color s.Color3) (Nationality s.Nationality3) (Cigarettes s.Cigarettes3) (Animal s.Animal3) (Drink s.Drink3))
-          ((Home 4) (Color s.Color4) (Nationality s.Nationality4) (Cigarettes s.Cigarettes4) (Animal s.Animal4) (Drink s.Drink4))
-          ((Home 5) (Color s.Color5) (Nationality s.Nationality5) (Cigarettes s.Cigarettes5) (Animal s.Animal5) (Drink s.Drink5))
-        )
-      )
-    >
-    <Solve e.Solve-B (16 () '=' Impossible)>;  
-  /* Поиск завершён */
-  (0 (e._) '=' Impossible) =
-    ;
   /* Возврат к предыдущему правилу */
   e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e._) (s.Rule (e._) '=' Impossible) =
     <Rp StepsBack '=' <Inc <Cp StepsBack>>>
@@ -182,24 +155,68 @@ Solve {
     <Rp Steps '=' <Inc <Cp Steps>>>
     <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
-  /* Все подсказки применены */
+  /* Решение найдено */
   e.Solve-B (s.Rule () e.Tables '=' e.Table) =
     <Rp Steps '=' <Inc <Cp Steps>>>
     <Rp StepsBack '=' <Inc <Cp StepsBack>>>
-    <Solve e.Solve-B (s.Rule () e.Tables '=' e.Table) (16 () '=' <ApplyRule 16 e.Table>)>;  
+    e.Solve-B (s.Rule () e.Tables '=' e.Table) (16 () '=' <ApplyRule 16 e.Table>);  
   /* Переход к следующему правилу */  
-  e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) =
+  e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) =
+    <FindMinRule (e.Rules) e.Table>: s.MinRule =
+    e.Rules: e.Rules-B s.MinRule e.Rules-E = 
     <Br RuleTables '='>
-    <ApplyRule s.NextRule e.Table>
+    <ApplyRule s.MinRule e.Table>
     <Dg RuleTables>:
     {
       (e.NewTable) e.RestNewTables =
         <Rp Steps '=' <Inc <Cp Steps>>>
         <Rp StepsBack '=' <Inc <Cp StepsBack>>>
-        <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' e.Table) (s.NextRule (e.RestRules) e.RestNewTables '=' e.NewTable)>;
+        <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) (s.MinRule (e.Rules-B e.Rules-E) e.RestNewTables '=' e.NewTable)>;
       =
-        <Solve e.Solve-B (s.Rule (s.NextRule e.RestRules) e.Tables '=' Impossible)>
+        <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>
     }      
+}
+
+/*
+
+<FindMinRule (e.Rules) e.Table> == s.Rule
+
+e.Rules ::= s.Rule+
+s.Rule ::= s.NUMBER
+e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Color ::= Yellow | Blue | Red | Green | White | '???'
+e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
+e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
+e.Animal ::= Cat | Horse | Bird | Fish | Dog | '???'
+e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
+
+*/
+FindMinRule {
+  (s.Rule) e._ =
+    s.Rule;
+  (s.Rule e.RestRules) e.Table =
+    <Br RuleTables '='>
+    <ApplyRule s.Rule e.Table>
+    <Lenw <Dg RuleTables>>: s.Min e._ =
+    <FindMinRule-Aux s.Min s.Rule (e.RestRules) e.Table>
+}
+
+FindMinRule-Aux {
+  0 s.MinRule (e._) e._ =
+    s.MinRule;
+  s.Min s.MinRule () e._ =
+    s.MinRule;
+  s.Min s.MinRule (s.Rule e.RestRules) e.Table =
+    <Br RuleTables '='>
+    <ApplyRule s.Rule e.Table>
+    <Lenw <Dg RuleTables>>: s.Len e._ =
+    <Min (s.Min s.MinRule) (s.Len s.Rule)>: (s.NewMin s.NewMinRule) =
+    <FindMinRule-Aux s.NewMin s.NewMinRule (e.RestRules) e.Table>
 }
 
 /*
@@ -607,7 +624,7 @@ ApplyRule {
     ;
   /* 16. Рыба - пятое животное. */
   16 e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E =
-    (e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E)
+    e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E
 }
 
 /*
@@ -659,20 +676,8 @@ e.Object ::= 'Норвежец'  | 'Датчанин'  |  'Англичанин'
 
 */
 Answer {
-  e.Table-B (e.Home-B (Nationality s.Nationality) e.Home-M (Animal Fish) e.Home-E) e.Table-E, 
-  s.Nationality:
-  {
-    Norwegian =
-      'Норвежец';
-    Danish =
-      'Датчанин';
-    Englishman =
-      'Англичанин';
-    German =
-      'Немец';
-    Shwed =
-      'Швед'
-  }
+  e.Table-B (e.Home-B (Nationality s.Nationality) e.Home-M (Animal Fish) e.Home-E) e.Table-E = 
+    <Trim <Format s.Nationality>>
 }    
 
 /*
@@ -893,40 +898,19 @@ RuleText {
 
 $ENTRY Go {
   = <Help>
-    <Br Solves '='>
     <Br Steps '=' 0>
     <Br StepsBack '=' 0>
-    <Solve
-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 nonoptimum      
-* 7 9 13 4 5 1 8 11 2 3 14 12 6 10 15 optimum       
-      (0 (7 9 13 4 5 1 8 11 2 3 14 12 6 10 15) '='
+    <Solve    
+      (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 4) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       )
-    >
-    <Dg Solves>:
-    {
-      =
-        <Prout <RU 'Вопрос: Чья рыба?\nОтвет: Нет решения.'>>; 
-      e.Solves = 
-        <MapAccum
-          {
-            s.Solve 
-            (e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table)) =
-              <Inc s.Solve>
-              <Prout <RU 'РЕШЕНИЕ '> s.Solve '\n'>
-              <Prout <RU 'Вопрос: Чья рыба?\nОтвет: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
-              <PrintSolve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table)>
-              <Prout>
-          }
-          1
-          e.Solves
-        >: s._ = 
-        <Prout <RU 'Количество шагов без возврата: '> <Dg Steps>>
-        <Prout <RU 'Количество шагов с возвратом: '> <Dg StepsBack>>
-    }
-    
+    >: e.Solve-B (16 () '=' e.Table) =
+    <Prout <RU 'Вопрос: Чья рыба?\nОтвет: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
+    <PrintSolve e.Solve-B (16 () '=' e.Table)>
+    <Prout <RU 'Количество шагов без возвратов: '> <Dg Steps>>
+    <Prout <RU 'Количество шагов с возвратами: '> <Dg StepsBack>>
 }
