@@ -42,8 +42,8 @@ https://github.com/bmstu-iu9/refal-5-lambda
 
 */
 
-*$FROM LibraryEx
-$EXTERN Map, MapAccum, Inc, Trim, Min;
+*$FROM LibraryEx;
+$EXTERN Map, Inc, Trim, Min;
 
 /*
 
@@ -214,34 +214,34 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 */
 Solve {
   /* Возврат к предыдущему правилу */
-  e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e._) (s.Rule (e._) '=' Impossible) =
-    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
+  e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e.Table) (s.Rule (e.Tables) '=' Impossible) =
+    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
     <Solve e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
   e.Solve-B (s.Rule (e.Rules) (e.Table) e.RestTables '=' Impossible) =
-    <Rp Steps '=' <Inc <Cp Steps>>>
-    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
+    <Rp "Steps" '=' <Inc <Cp "Steps">>>
+    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
     <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
   /* Решение найдено */
   e.Solve-B (s.Rule () e.Tables '=' e.Table) =
-    <Rp Steps '=' <Inc <Cp Steps>>>
-    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
+    <Rp "Steps" '=' <Inc <Cp "Steps">>>
+    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
     e.Solve-B (s.Rule () e.Tables '=' e.Table) (16 () '=' <ApplyRule <Rule 16> e.Table>);  
   /* Переход к следующему правилу */  
-  e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) =
-    <FindMinRule (e.Rules) e.Table>: s.MinRule =
-    e.Rules: e.Rules-B s.MinRule e.Rules-E = 
-    <Br RuleTables '='>
-    <ApplyRule <Rule s.MinRule> e.Table>
-    <Dg RuleTables>:
-    {
-      (e.NewTable) e.RestNewTables =
-        <Rp Steps '=' <Inc <Cp Steps>>>
-        <Rp StepsBack '=' <Inc <Cp StepsBack>>>
-        <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) (s.MinRule (e.Rules-B e.Rules-E) e.RestNewTables '=' e.NewTable)>;
-      =
-        <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>
-    }      
+  e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table),
+  <FindMinRule (e.Rules) e.Table>: s.MinRule,
+  e.Rules: e.Rules-B s.MinRule e.Rules-E,
+  <Br "RuleTables" '='>
+  <ApplyRule <Rule s.MinRule> e.Table>
+  <Dg "RuleTables">: 
+  {
+    (e.NewTable) e.RestNewTables =
+      <Rp "Steps" '=' <Inc <Cp "Steps">>>
+      <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
+      <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) (s.MinRule (e.Rules-B e.Rules-E) e.RestNewTables '=' e.NewTable)>;
+    =
+      <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>
+  }      
 }
 
 /*
@@ -264,25 +264,25 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
 FindMinRule {
-  (s.Rule) e._ =
+  (s.Rule) e.Table =
     s.Rule;
-  (s.Rule e.RestRules) e.Table =
-    <Br RuleTables '='>
-    <ApplyRule <Rule s.Rule> e.Table>
-    <Lenw <Dg RuleTables>>: s.Min e._ =
+  (s.Rule e.RestRules) e.Table,
+  <Br "RuleTables" '='>
+  <ApplyRule <Rule s.Rule> e.Table>
+  <Lenw <Dg "RuleTables">>: s.Min e.Tables =
     <FindMinRule-Aux s.Min s.Rule (e.RestRules) e.Table>
 }
 
 FindMinRule-Aux {
-  0 s.MinRule (e._) e._ =
+  0 s.MinRule (e.Rules) e.Table =
     s.MinRule;
-  s.Min s.MinRule () e._ =
+  s.Min s.MinRule () e.Table =
     s.MinRule;
-  s.Min s.MinRule (s.Rule e.RestRules) e.Table =
-    <Br RuleTables '='>
-    <ApplyRule <Rule s.Rule> e.Table>
-    <Lenw <Dg RuleTables>>: s.Len e._ =
-    <Min (s.Min s.MinRule) (s.Len s.Rule)>: (s.NewMin s.NewMinRule) =
+  s.Min s.MinRule (s.Rule e.RestRules) e.Table,
+  <Br "RuleTables" '='>
+  <ApplyRule <Rule s.Rule> e.Table>
+  <Lenw <Dg "RuleTables">>: s.Len e.Tables,
+  <Min (s.Min s.MinRule) (s.Len s.Rule)>: (s.NewMin s.NewMinRule) =
     <FindMinRule-Aux s.NewMin s.NewMinRule (e.RestRules) e.Table>
 }
 
@@ -316,7 +316,7 @@ ApplyRule {
   /* Member - 2 объекта в одном доме */
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;   
+    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;   
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table,
   <Exist (s.Category1 s.Object1) e.Table>: True,
@@ -324,30 +324,30 @@ ApplyRule {
     ; 
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 '???') e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;  
-  Member (s.Category1 s.Object1) (s.Category2 s._)
-  e._ (e._ (s.Category1 s.Object1) e._ (s.Category2 s._) e._) e._ =
+    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;  
+  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.OtherObject2) e.Home-E) e.Table-E =
     ;    
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;
-  Member (s.Category1 s._) (s.Category2 s.Object2)
-  e._ (e._ (s.Category1 s._) e._ (s.Category2 s.Object2) e._) e._ =
+    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;
+  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table-B (e.Home-B (s.Category1 s.OtherObject1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
     ;  
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 '???') e.Home-E) e.Table-E,
-  <Rp RuleTables '='
-    <Cp RuleTables>
+  <Rp "RuleTables" '='
+    <Cp "RuleTables">
     (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)
   >: False =
     ;
-  Member (s._ s._) (s._ s._)
-  e._ =
+  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table =
     ;
   /* Nextto - 1 объект в доме слева дома 2 объекта */
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;   
+    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;   
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table,
   <Exist (s.Category1 s.Object1) e.Table>: True,
@@ -355,37 +355,37 @@ ApplyRule {
     ; 
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;  
-  Nextto (s.Category1 s._) (s.Category2 s.Object2)
-  e._ (e._ (s.Category1 s._) e._) (e._ (s.Category2 s.Object2) e._) e._ =
+    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;  
+  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table-B (e.HomeL-B (s.Category1 s.OtherObject1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
     ;
-  Nextto (s._ s._) (s.Category2 s.Object2)
-  (e._ (s.Category2 s.Object2) e._) e._ =
+  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  (e.Home-B (s.Category2 s.Object2) e.Home-E) e.Table-E =
     ;      
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;
-  Nextto (s.Category1 s.Object1) (s.Category2 s._)
-  e._ (e._ (s.Category1 s.Object1) e._) (e._ (s.Category2 s._) e._) e._ =
+    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;
+  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.OtherObject2) e.HomeR-E) e.Table-E =
     ;
-  Nextto (s.Category1 s.Object1) (s._ s._)
-  e._ (e._ (s.Category1 s.Object1) e._) =
+  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-E) =
     ;  
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>: False =
+  <Rp "RuleTables" '=' <Cp "RuleTables"> (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>: False =
     ;
-  Nextto (s._ s._) (s._ s._)
-  e._ =
+  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  e.Table =
     ;
   /* Near - 2 объекта в соседних домах */
   Near (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table =
     <ApplyRule Nextto (s.Category1 s.Object1) (s.Category2 s.Object2) e.Table>
-    <Br RuleTablesTemp '=' <Cp RuleTables>>
-    <Rp RuleTables '='>
+    <Br "RuleTables"Temp '=' <Cp "RuleTables">>
+    <Rp "RuleTables" '='>
     <ApplyRule Nextto (s.Category2 s.Object2) (s.Category1 s.Object1) e.Table>
-    <Rp RuleTables '=' <Dg RuleTablesTemp> <Cp RuleTables>>;
+    <Rp "RuleTables" '=' <Dg "RuleTables"Temp> <Cp "RuleTables">>;
   /* Fish - рыба - пятое животное */
   Fish
   e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E =
@@ -416,9 +416,9 @@ s.Drink ::= Water | Tea | Milk | Coffee | Beer
 
 */
 Exist {
-  t.Object e._ (e._ t.Object e._) e._ =
+  t.Object e.Table-B (e.Home-B t.Object e.Home-E) e.Table-E =
     True;
-  t._ e._ =
+  t.Object e.Table =
     False  
 }
 
@@ -447,9 +447,9 @@ Answer {
 
 /*
 
-<PrintSolve e.Solve> ==
+<DoMapPrintSolve e.RuleSolve> ==
 
-e.Solve ::= (s.Rule (e.Rules) e.Tables '=' e.Table)+
+e.RuleSolve ::= (s.Rule (e.Rules) e.Tables '=' e.Table)
 
 s.Rules ::= s.Rule*
 s.Rule ::= s.NUMBER
@@ -467,19 +467,11 @@ e.Animal ::= Cat | Horse | Bird | Fish | Dog | '???'
 e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
-PrintSolve {
-  e.Solve =
-    <MapAccum
-      {
-        (s._ (e._))
-        (s.Rule (e.Rules) e._ '=' e.Table) =
-          (s.Rule (e.Rules))
-          <PrintRule s.Rule>
-          <PrintTable e.Table>
-      }
-      (0 ())     
-      e.Solve
-    >: e._ =    
+
+DoMapPrintSolve {
+  (s.Rule (e.Rules) e.Tables '=' e.Table) =
+    <PrintRule s.Rule>
+    <PrintTable e.Table>
 }
 
 /*
@@ -502,17 +494,16 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 PrintTable {
   e.Table =
     <Prout <RU 'Дом '  'Цвет           ' 'Национальность ' 'Сигареты       ' 'Животное       ' 'Напиток'>>
-    <Map
-      {
-        (
-          (Home s.Home) (Color e.Color) (Nationality e.Nationality)
-          (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-        ) =
-          <Prout s.Home '  ' <RU <Format e.Color> <Format e.Nationality> <Format e.Cigarettes> <Format e.Animal> <Format e.Drink>>>
-      }     
-      e.Table
-    >
+    <Map DoMapPrintTable e.Table>
     <Prout>
+}
+
+DoMapPrintTable {
+  (
+    (Home s.Home) (Color e.Color) (Nationality e.Nationality)
+    (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+  ) =
+    <Prout s.Home '  ' <RU <Format e.Color> <Format e.Nationality> <Format e.Cigarettes> <Format e.Animal> <Format e.Drink>>>
 }
 
 /*
@@ -662,20 +653,21 @@ RuleText {
 }
 
 $ENTRY Go {
-  = <Help>
-    <Br Steps '=' 0>
-    <Br StepsBack '=' 0>
-    <Solve    
-      (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '='
+  , 
+  <Help>
+  <Br "Steps" '=' 0>
+  <Br "StepsBack" '=' 0>
+  <Solve    
+    (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 4) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
       ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
-      )
-    >: e.Solve-B (16 () '=' e.Table) =
+    )
+  >: e.Solve-B (16 () '=' e.Table) =
     <Prout <RU 'Вопрос: Чья рыба?\nОтвет: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
-    <PrintSolve e.Solve-B (16 () '=' e.Table)>
-    <Prout <RU 'Количество шагов без возвратов: '> <Dg Steps>>
-    <Prout <RU 'Количество шагов с возвратами: '> <Dg StepsBack>>
+    <Map DoMapPrintSolve e.Solve-B (16 () '=' e.Table)>
+    <Prout <RU 'Количество шагов без возвратов: '> <Dg "Steps">>
+    <Prout <RU 'Количество шагов с возвратами: '> <Dg "StepsBack">>
 }
