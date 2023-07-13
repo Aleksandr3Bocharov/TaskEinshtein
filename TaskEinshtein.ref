@@ -1,17 +1,17 @@
 * Copyright 2023 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2023-07-09
+* 2023-07-13
 * https://github.com/Aleksandr3Bocharov/TaskEinshtein
 
 /*
 
 Задача Эйнштейна
 
-Программа "TaskEinshtein" написана на языке программирования Рефал-5λ.
-https://github.com/bmstu-iu9/refal-5-lambda
+Программа "TaskEinshtein" написана на языке программирования Рефал-05.
+https://github.com/Mazdaywik/Refal-05
 
-Решение задачи Эйнштейна на Рефал-5λ.
+Решение задачи Эйнштейна на Рефал-05.
 
 Задача Эйнштейна.
 
@@ -42,8 +42,7 @@ https://github.com/bmstu-iu9/refal-5-lambda
 
 */
 
-*$FROM LibraryEx;
-$EXTERN Map, Inc, Trim, Min;
+$EXTERN Map, Inc, Trim;
 
 /*
 
@@ -79,12 +78,14 @@ RU {
   */
   isRU {
     e.Char,
-    <Compare (<Ord e.Char>) 208 143>: '+',
-    <Compare (<Ord e.Char>) 208 192>: '-' =
+    <Ord e.Char>: 208 s.OrdChar2,
+    <Compare s.OrdChar2 143>: '+',
+    <Compare s.OrdChar2 192>: '-' =
       208;
     e.Char,
-    <Compare (<Ord e.Char>) 209 127>: '+',
-    <Compare (<Ord e.Char>) 209 144>: '-' =
+    <Ord e.Char>: 209 s.OrdChar2,
+    <Compare s.OrdChar2 127>: '+',
+    <Compare s.OrdChar2 144>: '-' =
       209;
     e.Char =
       False
@@ -94,7 +95,7 @@ RU {
 Help {
   = <Prout
       <RU
-        '\nРешение задачи Эйнштейна на Рефал-5 Лямбда.\n\n'
+        '\nРешение задачи Эйнштейна на Рефал-05.\n\n'
         'Задача Эйнштейна.\n\n'
         'Условия:\n'
         '1. Есть 5 домов разных цветов.\n'
@@ -214,7 +215,7 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 */
 Solve {
   /* Возврат к предыдущему правилу */
-  e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e.Table) (s.Rule (e.Tables) '=' Impossible) =
+  e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e.Table) (s.Rule (e.Rules) '=' Impossible) =
     <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
     <Solve e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
@@ -269,21 +270,37 @@ FindMinRule {
   (s.Rule e.RestRules) e.Table,
   <Br "RuleTables" '='>
   <ApplyRule <Rule s.Rule> e.Table>
-  <Lenw <Dg "RuleTables">>: s.Min e.Tables =
-    <FindMinRule-Aux s.Min s.Rule (e.RestRules) e.Table>
+  <Lenw <Dg "RuleTables">>: s.MinLen e.Tables =
+    <FindMinRule-Aux s.MinLen s.Rule (e.RestRules) e.Table>
 }
 
 FindMinRule-Aux {
   0 s.MinRule (e.Rules) e.Table =
     s.MinRule;
-  s.Min s.MinRule () e.Table =
+  s.MinLen s.MinRule () e.Table =
     s.MinRule;
-  s.Min s.MinRule (s.Rule e.RestRules) e.Table,
+  s.MinLen s.MinRule (s.Rule e.RestRules) e.Table,
   <Br "RuleTables" '='>
   <ApplyRule <Rule s.Rule> e.Table>
-  <Lenw <Dg "RuleTables">>: s.Len e.Tables,
-  <Min (s.Min s.MinRule) (s.Len s.Rule)>: (s.NewMin s.NewMinRule) =
-    <FindMinRule-Aux s.NewMin s.NewMinRule (e.RestRules) e.Table>
+  <Lenw <Dg "RuleTables">>: s.LenRule e.Tables,
+  <MinRule (s.MinLen s.MinRule) (s.LenRule s.Rule)>: (s.NewMinLen s.NewMinRule) =
+    <FindMinRule-Aux s.NewMinLen s.NewMinRule (e.RestRules) e.Table>
+}
+
+/*
+
+<MinRule t.MinRule t.Rule> == t.NewMinRule
+
+t.MinRule, t.Rule, t.NewMinRule ::= (s.Len s.Rule)
+s.Len, s.Rule ::= s.NUMBER
+
+*/
+MinRule {
+  (s.MinLen s.MinRule) (s.LenRule s.Rule),
+  <Compare s.MinLen s.LenRule>: '+' =
+    (s.LenRule s.Rule);
+  (s.MinLen s.MinRule) (s.LenRule s.Rule) =
+    (s.MinLen s.MinRule)
 }
 
 /*
