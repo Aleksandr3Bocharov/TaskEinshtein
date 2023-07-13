@@ -52,44 +52,44 @@ e.String ::= s.CHAR*
 
 */
 RU {
-    =
-      ;
-    'Ё' e.RestChars =
-      <Chr 240> <RU e.RestChars>;
-    'ё' e.RestChars =
-      <Chr 241> <RU e.RestChars>;
-    s.Char1 s.Char2 e.RestChars,
-    <isRU s.Char1 s.Char2>:208 =
-      <Chr <Sub <Ord s.Char2> 16>> <RU e.RestChars>;
-    s.Char1 s.Char2 e.RestChars,
-    <isRU s.Char1 s.Char2>:209 =
-      <Chr <Add <Ord s.Char2> 96>> <RU e.RestChars>;
-    s.Char e.RestChars =
-      s.Char <RU e.RestChars>;
-  }
+  =
+    ;
+  'Ё' e.RestChars =
+    <Chr 240> <RU e.RestChars>;
+  'ё' e.RestChars =
+    <Chr 241> <RU e.RestChars>;
+  s.Char1 s.Char2 e.RestChars,
+  <isRU s.Char1 s.Char2>:208 =
+    <Chr <Sub <Ord s.Char2> 16>> <RU e.RestChars>;
+  s.Char1 s.Char2 e.RestChars,
+  <isRU s.Char1 s.Char2>:209 =
+    <Chr <Add <Ord s.Char2> 96>> <RU e.RestChars>;
+  s.Char e.RestChars =
+    s.Char <RU e.RestChars>;
+}
   
-  /*
+/*
   
-  <isRU e.Char> == s.isRU
+<isRU e.Char> == s.isRU
   
-  e.Char ::= s.CHAR s.CHAR
-  s.isRU ::= 208 | 209 | False
+e.Char ::= s.CHAR s.CHAR
+s.isRU ::= 208 | 209 | False
   
-  */
-  isRU {
-    e.Char,
-    <Ord e.Char>: 208 s.OrdChar2,
-    <Compare s.OrdChar2 143>: '+',
-    <Compare s.OrdChar2 192>: '-' =
-      208;
-    e.Char,
-    <Ord e.Char>: 209 s.OrdChar2,
-    <Compare s.OrdChar2 127>: '+',
-    <Compare s.OrdChar2 144>: '-' =
-      209;
-    e.Char =
-      False
-  }
+*/
+isRU {
+  e.Char,
+  <Ord e.Char>: 208 s.OrdChar2,
+  <Compare s.OrdChar2 143>: '+',
+  <Compare s.OrdChar2 192>: '-' =
+    208;
+  e.Char,
+  <Ord e.Char>: 209 s.OrdChar2,
+  <Compare s.OrdChar2 127>: '+',
+  <Compare s.OrdChar2 144>: '-' =
+    209;
+  e.Char =
+    False
+}
 
 * Вывод справки
 Help {
@@ -216,29 +216,29 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 Solve {
   /* Возврат к предыдущему правилу */
   e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' e.Table) (s.Rule (e.Rules) '=' Impossible) =
-    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.PrevRule (e.PrevRules) e.Tables '=' Impossible)>;
   /* Переход к следующему применению правила */
   e.Solve-B (s.Rule (e.Rules) (e.Table) e.RestTables '=' Impossible) =
-    <Rp "Steps" '=' <Inc <Cp "Steps">>>
-    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
+    <Rp Steps '=' <Inc <Cp Steps>>>
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     <Solve e.Solve-B (s.Rule (e.Rules) e.RestTables '=' e.Table)>;
   /* Решение найдено */
   e.Solve-B (s.Rule () e.Tables '=' e.Table) =
-    <Rp "Steps" '=' <Inc <Cp "Steps">>>
-    <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
+    <Rp Steps '=' <Inc <Cp Steps>>>
+    <Rp StepsBack '=' <Inc <Cp StepsBack>>>
     e.Solve-B (s.Rule () e.Tables '=' e.Table) (16 () '=' <ApplyRule <Rule 16> e.Table>);  
   /* Переход к следующему правилу */  
   e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table),
   <FindMinRule (e.Rules) e.Table>: s.MinRule,
   e.Rules: e.Rules-B s.MinRule e.Rules-E,
-  <Br "RuleTables" '='>
+  <Br RuleTables '='>
   <ApplyRule <Rule s.MinRule> e.Table>
-  <Dg "RuleTables">: 
+  <Dg RuleTables>: 
   {
     (e.NewTable) e.RestNewTables =
-      <Rp "Steps" '=' <Inc <Cp "Steps">>>
-      <Rp "StepsBack" '=' <Inc <Cp "StepsBack">>>
+      <Rp Steps '=' <Inc <Cp Steps>>>
+      <Rp StepsBack '=' <Inc <Cp StepsBack>>>
       <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' e.Table) (s.MinRule (e.Rules-B e.Rules-E) e.RestNewTables '=' e.NewTable)>;
     =
       <Solve e.Solve-B (s.Rule (e.Rules) e.Tables '=' Impossible)>
@@ -268,9 +268,9 @@ FindMinRule {
   (s.Rule) e.Table =
     s.Rule;
   (s.Rule e.RestRules) e.Table,
-  <Br "RuleTables" '='>
+  <Br RuleTables '='>
   <ApplyRule <Rule s.Rule> e.Table>
-  <Lenw <Dg "RuleTables">>: s.MinLen e.Tables =
+  <Lenw <Dg RuleTables>>: s.MinLen e.Tables =
     <FindMinRule-Aux s.MinLen s.Rule (e.RestRules) e.Table>
 }
 
@@ -280,9 +280,9 @@ FindMinRule-Aux {
   s.MinLen s.MinRule () e.Table =
     s.MinRule;
   s.MinLen s.MinRule (s.Rule e.RestRules) e.Table,
-  <Br "RuleTables" '='>
+  <Br RuleTables '='>
   <ApplyRule <Rule s.Rule> e.Table>
-  <Lenw <Dg "RuleTables">>: s.LenRule e.Tables,
+  <Lenw <Dg RuleTables>>: s.LenRule e.Tables,
   <MinRule (s.MinLen s.MinRule) (s.LenRule s.Rule)>: (s.NewMinLen s.NewMinRule) =
     <FindMinRule-Aux s.NewMinLen s.NewMinRule (e.RestRules) e.Table>
 }
@@ -333,7 +333,7 @@ ApplyRule {
   /* Member - 2 объекта в одном доме */
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;   
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;   
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table,
   <Exist (s.Category1 s.Object1) e.Table>: True,
@@ -341,20 +341,20 @@ ApplyRule {
     ; 
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 '???') e.Home-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;  
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;  
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.OtherObject2) e.Home-E) e.Table-E =
     ;    
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;
+    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 s.OtherObject1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
     ;  
   Member (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 '???') e.Home-E) e.Table-E,
-  <Rp "RuleTables" '='
-    <Cp "RuleTables">
+  <Rp RuleTables '='
+    <Cp RuleTables>
     (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)
   >: False =
     ;
@@ -364,7 +364,7 @@ ApplyRule {
   /* Nextto - 1 объект в доме слева дома 2 объекта */
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;   
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;   
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table,
   <Exist (s.Category1 s.Object1) e.Table>: True,
@@ -372,7 +372,7 @@ ApplyRule {
     ; 
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;  
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;  
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.OtherObject1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
     ;
@@ -381,7 +381,7 @@ ApplyRule {
     ;      
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E =
-    <Rp "RuleTables" '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.OtherObject2) e.HomeR-E) e.Table-E =
     ;
@@ -390,7 +390,7 @@ ApplyRule {
     ;  
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E,
-  <Rp "RuleTables" '=' <Cp "RuleTables"> (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>: False =
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>: False =
     ;
   Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table =
@@ -399,10 +399,10 @@ ApplyRule {
   Near (s.Category1 s.Object1) (s.Category2 s.Object2)
   e.Table =
     <ApplyRule Nextto (s.Category1 s.Object1) (s.Category2 s.Object2) e.Table>
-    <Br "RuleTables"Temp '=' <Cp "RuleTables">>
-    <Rp "RuleTables" '='>
+    <Br RuleTablesTemp '=' <Cp RuleTables>>
+    <Rp RuleTables '='>
     <ApplyRule Nextto (s.Category2 s.Object2) (s.Category1 s.Object1) e.Table>
-    <Rp "RuleTables" '=' <Dg "RuleTables"Temp> <Cp "RuleTables">>;
+    <Rp RuleTables '=' <Dg RuleTablesTemp> <Cp RuleTables>>;
   /* Fish - рыба - пятое животное */
   Fish
   e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E =
@@ -672,8 +672,8 @@ RuleText {
 $ENTRY Go {
   , 
   <Help>
-  <Br "Steps" '=' 0>
-  <Br "StepsBack" '=' 0>
+  <Br Steps '=' 0>
+  <Br StepsBack '=' 0>
   <Solve    
     (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '='
       ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
@@ -685,6 +685,6 @@ $ENTRY Go {
   >: e.Solve-B (16 () '=' e.Table) =
     <Prout <RU 'Вопрос: Чья рыба?\nОтвет: '> <RU <Answer e.Table>> <RU ' держит рыбу.\n'>>
     <Map DoMapPrintSolve e.Solve-B (16 () '=' e.Table)>
-    <Prout <RU 'Количество шагов без возвратов: '> <Dg "Steps">>
-    <Prout <RU 'Количество шагов с возвратами: '> <Dg "StepsBack">>
+    <Prout <RU 'Количество шагов без возвратов: '> <Dg Steps>>
+    <Prout <RU 'Количество шагов с возвратами: '> <Dg StepsBack>>
 }
