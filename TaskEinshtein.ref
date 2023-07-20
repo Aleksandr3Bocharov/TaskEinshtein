@@ -53,7 +53,7 @@ $EXTERN GTKInit, MessageBox;
 
 * Вывод справки
 Help {
-  = <MessageBox Info
+  = <MessageBox
       'Решение задачи Эйнштейна на Рефал-05.\n\n'
       'Задача Эйнштейна.\n\n'
       'Условия:\n'
@@ -506,7 +506,7 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 DoMapMessageSolve {
   (s.Rule (e.Rules) e.Tables '=' e.Table) =
-    <MessageBox Info
+    <MessageBox
       'Подсказка ' <Symb s.Rule> '\n'
       <RuleText s.Rule> '\n\n'
       <Table e.Table>
@@ -632,9 +632,9 @@ $ENTRY Go {
       ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
     )
   >: e.Solve-B (16 () '=' e.Table) =
-    <MessageBox Info 'Вопрос: Чья рыба?\nОтвет: ' <Answer e.Table> ' держит рыбу.'>
+    <MessageBox 'Вопрос: Чья рыба?\nОтвет: ' <Answer e.Table> ' держит рыбу.'>
     <Map DoMapMessageSolve e.Solve-B (16 () '=' e.Table)>
-    <MessageBox Info
+    <MessageBox
       'Количество шагов без возвратов: ' <Symb <Dg Steps>> '.\n'
       'Количество шагов с возвратами: ' <Symb <Dg StepsBack>> '.\n'
     >
