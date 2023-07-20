@@ -94,22 +94,27 @@ R05_DEFINE_ENTRY_FUNCTION(MessageBox, "MessageBox") {
 
 /*
 
-<TreeView> ==
+<TreeSolveView> ==
 
 */
 enum {
-    COLUMN_TITLE,
-    COLUMN_ARTIST,
-    COLUMN_CATALOGUE,
+    COLUMN_HOME,
+    COLUMN_COLOR,
+    COLUMN_NATIONALITY,
+    COLUMN_CIGARETTES,
+    COLUMN_ANIMAL,
+    COLUMN_DRINK,
     N_COLUMNS
 };
 
-void closeApp(GtkWidget *window, gpointer data)
+void closeWin(GtkWidget *window, gpointer data)
 {
     gtk_main_quit();
 }
 
-R05_DEFINE_ENTRY_FUNCTION(TreeView, "TreeView") {
+GtkTreeStore *store;
+
+R05_DEFINE_ENTRY_FUNCTION(TreeSolveView, "TreeSolveView") {
   struct r05_node *callee = arg_begin->next;
 
   if (callee->next != arg_end)
@@ -118,54 +123,126 @@ R05_DEFINE_ENTRY_FUNCTION(TreeView, "TreeView") {
   r05_reset_allocator();
 
   GtkWidget *window;
-    GtkTreeStore *store;
-    GtkWidget *view;
-    GtkTreeIter parent_iter, child_iter;
-    GtkCellRenderer *renderer;
+  GtkWidget *view;
+  GtkCellRenderer *renderer;
     
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Tree");
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+  gtk_window_set_title(GTK_WINDOW(window), "Решение задачи Эйнштейна");
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
-    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(closeApp), NULL);
+  g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(closeWin), NULL);
 
-    store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 
-    gtk_tree_store_append(store, &parent_iter, NULL);
-    gtk_tree_store_set(store, &parent_iter,
-                       COLUMN_TITLE, "Dark Side of the Moon",
-                       COLUMN_ARTIST, "Pink Floyd",
-                       COLUMN_CATALOGUE, "B000024D4P",
-                       -1);
-    gtk_tree_store_append(store, &child_iter, &parent_iter);
-    gtk_tree_store_set(store, &child_iter, COLUMN_TITLE, "Speak to Me", -1);
+  renderer = gtk_cell_renderer_text_new();
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Дом", renderer,
+                                              "text", COLUMN_HOME,
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Цвет", renderer,
+                                              "text", COLUMN_COLOR, 
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Национальность", renderer,
+                                              "text", COLUMN_NATIONALITY,
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Сигареты", renderer,
+                                              "text", COLUMN_CIGARETTES,
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Животное", renderer,
+                                              "text", COLUMN_ANIMAL, 
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                              -1,
+                                              "Напиток", renderer,
+                                              "text", COLUMN_DRINK,
+                                              NULL);
 
-    view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+  gtk_container_add(GTK_CONTAINER(window), view);
 
-    renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_TITLE,
-                                                "Title", renderer,
-                                                "text", COLUMN_TITLE,
-                                                NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_ARTIST,
-                                                "Catalogue", renderer,
-                                                "text", COLUMN_ARTIST,
-                                                NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_CATALOGUE,
-                                                "Catalogue", renderer,
-                                                "text", COLUMN_CATALOGUE,
-                                                NULL);
+  gtk_widget_show_all(window);
 
-    gtk_container_add(GTK_CONTAINER(window), view);
+  gtk_main();
 
-    gtk_widget_show_all(window);
+  r05_splice_from_freelist(arg_begin);
+  r05_splice_to_freelist(arg_begin, arg_end);
+}
 
-    gtk_main();
+/*
+
+<TreeSolveNew> ==
+
+*/
+R05_DEFINE_ENTRY_FUNCTION(TreeSolveNew, "TreeSolveNew") {
+  struct r05_node *callee = arg_begin->next;
+
+  if (callee->next != arg_end)
+    r05_recognition_impossible();
+
+  r05_reset_allocator();
+
+  store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+  r05_splice_from_freelist(arg_begin);
+  r05_splice_to_freelist(arg_begin, arg_end);
+}
+
+/*
+
+<TreeSolveRule> ==
+
+*/
+GtkTreeIter parent_iter;
+  
+R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
+  struct r05_node *callee = arg_begin->next;
+
+  if (callee->next != arg_end)
+    r05_recognition_impossible();
+
+  r05_reset_allocator();
+
+  gtk_tree_store_append(store, &parent_iter, NULL);
+  gtk_tree_store_set(store, &parent_iter,
+                    COLUMN_HOME, "Услови\nВАПА В А а ап  П ПП  П П\nwqgqwgqgqgq\negqegqegqg",
+                    -1);
+
+  r05_splice_from_freelist(arg_begin);
+  r05_splice_to_freelist(arg_begin, arg_end);
+}
+
+/*
+
+<TreeSolveTable> ==
+
+*/
+GtkTreeIter child_iter;
+  
+R05_DEFINE_ENTRY_FUNCTION(TreeSolveTable, "TreeSolveTable") {
+  struct r05_node *callee = arg_begin->next;
+
+  if (callee->next != arg_end)
+    r05_recognition_impossible();
+
+  r05_reset_allocator();
+
+  gtk_tree_store_append(store, &child_iter, &parent_iter);
+  gtk_tree_store_set(store, &child_iter, 
+                    COLUMN_HOME, "Dark Side of the Moon",
+                    COLUMN_COLOR, "Pink Floyd",
+                    COLUMN_NATIONALITY, "B000024D4P",
+                    COLUMN_CIGARETTES, "Dark Side of the Moon",
+                    COLUMN_ANIMAL, "Pink Floyd",
+                    COLUMN_DRINK, "B000024D4P",
+                    -1);
 
   r05_splice_from_freelist(arg_begin);
   r05_splice_to_freelist(arg_begin, arg_end);

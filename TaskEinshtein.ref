@@ -46,10 +46,10 @@ https://docs.gtk.org/gtk3/
 */
 
 *$FROM LibraryEx
-$EXTERN Map, Inc, Trim;
+$EXTERN Map, Inc;
 
 *$FROM libraryc
-$EXTERN GTKInit, MessageBox;
+$EXTERN GTKInit, MessageBox, TreeSolveNew, TreeSolveView, TreeSolveRule, TreeSolveTable;
 
 * Вывод справки
 Help {
@@ -478,15 +478,14 @@ e.Object ::= 'Норвежец'  | 'Датчанин'  |  'Англичанин'
 */
 Answer {
   e.Table-B (e.Home-B (Nationality s.Nationality) e.Home-M (Animal Fish) e.Home-E) e.Table-E = 
-    <Trim <Format s.Nationality>>
+    <ObjectText s.Nationality>
 }    
 
 /*
 
-<DoMapMessageSolve e.RuleSolve> ==
+<DoMapSolve t.RuleSolve> ==
 
-e.RuleSolve ::= (s.Rule (e.Rules) e.Tables '=' e.Table)
-
+t.RuleSolve ::= (s.Rule (e.Rules) e.Tables '=' e.Table)
 s.Rules ::= s.Rule*
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
@@ -504,20 +503,17 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
 
-DoMapMessageSolve {
+DoMapSolve {
   (s.Rule (e.Rules) e.Tables '=' e.Table) =
-    <MessageBox
-      'Подсказка ' <Symb s.Rule> '\n'
-      <RuleText s.Rule> '\n\n'
-      <Table e.Table>
-    >
+    <TreeSolveRule ('Подсказка ' <Symb s.Rule>) (<RuleText s.Rule>)>
+    <Map DoMapTable e.Table>
 }
 
 /*
 
-<Table e.Table> ==
+<DoMapTable t.Table> ==
 
-e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
+t.Table ::= (e.Home1) | (e.Home2) | (e.Home3) | (e.Home4) | (e.Home5)
 e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
 e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
 e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
@@ -530,23 +526,25 @@ e.Animal ::= Cat | Horse | Bird | Fish | Dog | '???'
 e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 
 */
-Table {
-  e.Table =
-    'Дом Цвет           Национальность Сигареты       Животное       Напиток\n'
-    <Map DoMapTable e.Table>
-}
 
 DoMapTable {
   (
     (Home s.Home) (Color e.Color) (Nationality e.Nationality)
     (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
   ) =
-    <Symb s.Home> '  ' <Format e.Color> <Format e.Nationality> <Format e.Cigarettes> <Format e.Animal> <Format e.Drink> '\n'
+    <TreeSolveTable
+      (<Symb s.Home>)
+      (<ObjectText e.Color>)
+      (<ObjectText e.Nationality>)
+      (<ObjectText e.Cigarettes>)
+      (<ObjectText e.Animal>)
+      (<ObjectText e.Drink>)
+    >  
 }
 
 /*
 
-<Format e.Object> == e.Format
+<ObjectText e.Object> == e.ObjectText
 
 e.Object ::= s.Color | s.Nationality | s.Cigarretes | s.Animal | s.Drink | '???'
 s.Color ::= Yellow | Blue | Red | Green | White
@@ -554,54 +552,54 @@ s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
 s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
 s.Animal ::= Cat | Horse | Bird | Fish | Dog
 s.Drink ::= Water | Tea | Milk | Coffee | Beer
-e.Format ::= 'Жёлтый         ' | 'Голубой        ' | 'Красный        ' | 'Зелёный        ' | 'Белый          ' |
-  | 'Норвежец       ' | 'Датчанин       '  |  'Англичанин     ' | 'Немец          ' | 'Швед           '  |
-  | 'Dunhill        ' | 'Rothmans       '  |  'Pall Mall      ' | 'Marlboro       ' | 'Winfield       '  |
-  | 'Кошка          ' | 'Конь           '  |  'Птица          ' | 'Рыба           ' | 'Собака         '  |
-  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '???            '
+e.ObjectText ::= 'Жёлтый' | 'Голубой' | 'Красный' | 'Зелёный' | 'Белый' |
+  | 'Норвежец' | 'Датчанин'  |  'Англичанин' | 'Немец' | 'Швед'  |
+  | 'Dunhill' | 'Rothmans'  |  'Pall Mall' | 'Marlboro' | 'Winfield'  |
+  | 'Кошка' | 'Конь'  |  'Птица' | 'Рыба' | 'Собака'  |
+  | 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '???'
 
 */
-Format {
+ObjectText {
   Yellow =
-    'Жёлтый         ';
+    'Жёлтый';
   Blue =
-    'Голубой        ';
+    'Голубой';
   Red =
-    'Красный        ';
+    'Красный';
   Green =
-    'Зелёный        ';
+    'Зелёный';
   White =
-    'Белый          ';     
+    'Белый';     
   Norwegian =
-    'Норвежец       '; 
+    'Норвежец'; 
   Danish =
-    'Датчанин       ';  
+    'Датчанин';  
   Englishman =
-    'Англичанин     ';
+    'Англичанин';
   German =
-    'Немец          '; 
+    'Немец'; 
   Shwed =
-    'Швед           ';   
+    'Швед';   
   Dunhill =
-    'Dunhill        ';
+    'Dunhill';
   Rothmans =
-    'Rothmans       ';
+    'Rothmans';
   PallMall =
-    'Pall Mall      ';
+    'Pall Mall';
   Marlboro =
-    'Marlboro       '; 
+    'Marlboro'; 
   Winfield =
-    'Winfield       ';  
+    'Winfield';  
   Cat =
-    'Кошка          ';    
+    'Кошка';    
   Horse =
-    'Конь           ';
+    'Конь';
   Bird =
-    'Птица          '; 
+    'Птица'; 
   Fish =
-    'Рыба           ';
+    'Рыба';
   Dog =
-    'Собака         ';
+    'Собака';
   Water =
     'Вода';  
   Tea =
@@ -613,7 +611,7 @@ Format {
   Beer =
     'Пиво';
   '???' =
-    '???            '  
+    '???'  
 }
 
 
@@ -633,7 +631,9 @@ $ENTRY Go {
     )
   >: e.Solve-B (16 () '=' e.Table) =
     <MessageBox 'Вопрос: Чья рыба?\nОтвет: ' <Answer e.Table> ' держит рыбу.'>
-    <Map DoMapMessageSolve e.Solve-B (16 () '=' e.Table)>
+    <TreeSolveNew>
+    <Map DoMapSolve e.Solve-B (16 () '=' e.Table)>
+    <TreeSolveView>
     <MessageBox
       'Количество шагов без возвратов: ' <Symb <Dg Steps>> '.\n'
       'Количество шагов с возвратами: ' <Symb <Dg StepsBack>> '.\n'
