@@ -116,7 +116,7 @@ GtkTreeStore *store;
 
 R05_DEFINE_ENTRY_FUNCTION(TreeSolveView, "TreeSolveView") {
   struct r05_node *callee = arg_begin->next;
-
+  
   if (callee->next != arg_end)
     r05_recognition_impossible();
 
@@ -197,22 +197,101 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveNew, "TreeSolveNew") {
 
 /*
 
-<TreeSolveRule> ==
+<TreeSolveRule (e.Rule) e.RuleText> ==
+
+e.Rule ::= 'Подсказка ' s.Rule
+s.Rule ::= s.NUMBER
+e.RuleText ::= 'Англичанин живет в красном доме.' | 'У шведа есть собака.' |
+  | 'Датчанин пьет чай.' | 'Зеленый дом стоит слева от белого.' | 'Обитатель зеленого дома пьет кофе.' |
+  | 'Человек, который курит Pall Mall, держит птицу.' | 'Обитатель среднего дома пьет молоко.' |
+  | 'Норвежец живет в первом доме.' | 'Курильщик Marlboro живет возле того, у кого есть кошка.' |
+  | 'Человек, у которого есть конь, живет возле того, кто курит Dunhill.' | 'Курильщик Winfield пьет пиво.' |
+  | 'Норвежец живет возле голубого дома.' | 'Немец курит Rothmans.' | 
+  | 'Курильщик Marlboro живет по соседству с человеком, который пьет воду.' | 
+  | 'Условия:'
+    '1. Есть 5 домов разных цветов.'
+    '2. В каждом доме живет по одному человеку, отличающегося от другого по национальности.'
+    '3. Каждый обитатель пьет только один определенный напиток, курит определенную марку сигарет и держит животное.'
+    '4. Никто из пяти людей не пьет одинакового напитка, не курит одинаковые сигареты и не держит одинаковых животных.' |
+  | 'Рыба - пятое животное.'
 
 */
 GtkTreeIter parent_iter;
   
 R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
   struct r05_node *callee = arg_begin->next;
+  struct r05_node *trl_b = callee->next, *trl_e;
+  
+  if (trl_b == arg_end)
+    r05_recognition_impossible(); 
 
-  if (callee->next != arg_end)
+  if (R05_DATATAG_OPEN_BRACKET != trl_b->tag)
     r05_recognition_impossible();
+  
+  trl_e = trl_b->info.link;
+
+  struct r05_node *rl_b, *rl_e;
+
+#define RULE_MAX 64
+  char rule[RULE_MAX + 1];
+  size_t rule_len;
+
+  r05_prepare_argument(&rl_b, &rl_e, callee, trl_e);
+  rule_len = r05_read_chars(rule, RULE_MAX, &rl_b, &rl_e);
+  rule[rule_len] = '\0';
+
+  if (rule_len == 0)
+    r05_recognition_impossible();
+
+  if (!r05_empty_seq(rl_b, rl_e))
+  {
+    struct r05_node *p = rl_b;
+    
+    while (p != rl_e->next && p->tag == R05_DATATAG_CHAR)
+      p = p->next;
+
+    if (p == rl_e->next)
+      r05_builtin_error("very long rule");
+    else
+      r05_recognition_impossible();
+  }
+
+#undef RULE_MAX
+
+  struct r05_node *rlt_b, *rlt_e;
+
+#define RULETEXT_MAX 1024
+  char ruletext[RULETEXT_MAX + 1];
+  size_t ruletext_len;
+
+  r05_prepare_argument(&rlt_b, &rlt_e, trl_e->prev, arg_end);
+  ruletext_len = r05_read_chars(ruletext, RULETEXT_MAX, &rlt_b, &rlt_e);
+  ruletext[ruletext_len] = '\0';
+
+  if (ruletext_len == 0)
+    r05_recognition_impossible();
+
+  if (!r05_empty_seq(rlt_b, rlt_e))
+  {
+    struct r05_node *p = rlt_b;
+    
+    while (p != rlt_e->next && p->tag == R05_DATATAG_CHAR)
+      p = p->next;
+
+    if (p == rlt_e->next)
+      r05_builtin_error("very long ruletext");
+    else
+      r05_recognition_impossible();
+  }
+
+#undef RULETEXT_MAX
 
   r05_reset_allocator();
 
   gtk_tree_store_append(store, &parent_iter, NULL);
   gtk_tree_store_set(store, &parent_iter,
-                    COLUMN_HOME, "Услови\nВАПА В А а ап  П ПП  П П\nwqgqwgqgqgq\negqegqegqg",
+                    COLUMN_HOME, rule,
+                    COLUMN_COLOR, ruletext,
                     -1);
 
   r05_splice_from_freelist(arg_begin);
