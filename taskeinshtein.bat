@@ -1,4 +1,4 @@
-refal05c taskeinshtein libraryc refal05rts library libraryex
+refal05c taskeinshtein taskeinshteinc refal05rts library libraryex
 SET CFLAGS=-IF:\Programming\Refal-05\lib -o taskeinshtein -mms-bitfields -IF:/Programming/GTK/include/gtk-3.0 -IF:/Programming/GTK/include/cairo -IF:/Programming/GTK/include/pango-1.0 -IF:/Programming/GTK/include/atk-1.0 -IF:/Programming/GTK/include/cairo -IF:/Programming/GTK/include/pixman-1 -IF:/Programming/GTK/include -IF:/Programming/GTK/include/freetype2 -IF:/Programming/GTK/include -IF:/Programming/GTK/include/libpng15 -IF:/Programming/GTK/include/gdk-pixbuf-2.0 -IF:/Programming/GTK/include/libpng15 -IF:/Programming/GTK/include/glib-2.0 -IF:/Programming/GTK/lib/glib-2.0/include
 SET LDFLAGS=-LF:/Programming/GTK/lib -lgtk-3 -lgdk-3 -lgdi32 -limm32 -lshell32 -lole32 -Wl,-luuid -lpangocairo-1.0 -lpangoft2-1.0 -lfreetype -lfontconfig -lpangowin32-1.0 -lgdi32 -lpango-1.0 -lm -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0
-%R05CCOMP%  %CFLAGS% taskeinshtein.c libraryc.c F:\Programming\Refal-05\lib\refal05rts.c F:\Programming\Refal-05\lib\library.c libraryex.c %LDFLAGS%
+%R05CCOMP%  %CFLAGS% taskeinshtein.c taskeinshteinc.c F:\Programming\Refal-05\lib\refal05rts.c F:\Programming\Refal-05\lib\library.c libraryex.c %LDFLAGS%
