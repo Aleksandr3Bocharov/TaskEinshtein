@@ -220,6 +220,8 @@ GtkTreeIter parent_iter;
   
 R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
   struct r05_node *callee = arg_begin->next;
+
+  /* (e.Rule) */
   struct r05_node *trl_b = callee->next, *trl_e;
   
   if (trl_b == arg_end)
@@ -258,6 +260,7 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
 
 #undef RULE_MAX
 
+  /* e.RuleText */
   struct r05_node *rlt_b, *rlt_e;
 
 #define RULETEXT_MAX 1024
@@ -300,7 +303,15 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
 
 /*
 
-<TreeSolveTable> ==
+<TreeSolveTable e.TableHome> ==
+
+e.TableHome ::= s.Home (e.Color) (e.Nationality) (e.Cigarettes) (e.Animal) e.Drink
+s.Home ::= '1'..'5'
+e.Color ::= 'Жёлтый' | 'Голубой' | 'Красный' | 'Зелёный' | 'Белый' | '???'
+e.Nationality ::= 'Норвежец' | 'Датчанин'  |  'Англичанин' | 'Немец' | 'Швед' | '???'
+e.Cigarettes ::= 'Dunhill' | 'Rothmans'  |  'Pall Mall' | 'Marlboro' | 'Winfield' | '???'
+e.Animal ::= 'Кошка' | 'Конь'  |  'Птица' | 'Рыба' | 'Собака' | '???'
+e.Drink ::= 'Вода' | 'Чай'  |  'Молоко' | 'Кофе' | 'Пиво' | '???'
 
 */
 GtkTreeIter child_iter;
