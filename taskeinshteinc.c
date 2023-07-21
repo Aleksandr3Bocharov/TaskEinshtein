@@ -49,7 +49,7 @@ R05_DEFINE_ENTRY_FUNCTION(MessageBox, "MessageBox") {
 
 #define MESSAGE_MAX 2048
   char message[MESSAGE_MAX + 1];
-  size_t message_len;
+  int message_len;
 
   r05_prepare_argument(&msg_b, &msg_e, arg_begin, arg_end);
   message_len = r05_read_chars(message, MESSAGE_MAX, &msg_b, &msg_e);
@@ -121,16 +121,20 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveView, "TreeSolveView") {
     r05_recognition_impossible();
 
   r05_reset_allocator();
-
+  
   GtkWidget *window;
+  GtkWidget *scrolled_window;
   GtkWidget *view;
   GtkCellRenderer *renderer;
-    
+
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(window), "Решение задачи Эйнштейна");
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size(GTK_WINDOW(window), 930, 725);
 
   g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(closeWin), NULL);
+
+  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 
@@ -165,9 +169,13 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveView, "TreeSolveView") {
                                               "Напиток", renderer,
                                               "text", COLUMN_DRINK,
                                               NULL);
+  
+  
+  gtk_tree_view_expand_all(GTK_TREE_VIEW(view));
 
-  gtk_container_add(GTK_CONTAINER(window), view);
-
+  gtk_container_add(GTK_CONTAINER(scrolled_window), view);
+  gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+  
   gtk_widget_show_all(window);
 
   gtk_main();
@@ -236,7 +244,7 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
 
 #define RULE_MAX 64
   char rule[RULE_MAX + 1];
-  size_t rule_len;
+  int rule_len;
 
   r05_prepare_argument(&rl_b, &rl_e, callee, trl_e);
   rule_len = r05_read_chars(rule, RULE_MAX, &rl_b, &rl_e);
@@ -265,7 +273,7 @@ R05_DEFINE_ENTRY_FUNCTION(TreeSolveRule, "TreeSolveRule") {
 
 #define RULETEXT_MAX 1024
   char ruletext[RULETEXT_MAX + 1];
-  size_t ruletext_len;
+  int ruletext_len;
 
   r05_prepare_argument(&rlt_b, &rlt_e, trl_e->prev, arg_end);
   ruletext_len = r05_read_chars(ruletext, RULETEXT_MAX, &rlt_b, &rlt_e);
@@ -319,19 +327,94 @@ GtkTreeIter child_iter;
 R05_DEFINE_ENTRY_FUNCTION(TreeSolveTable, "TreeSolveTable") {
   struct r05_node *callee = arg_begin->next;
 
-  if (callee->next != arg_end)
+   /* s.Home */
+  struct r05_node *shm = callee->next;
+  
+  if (shm == arg_end)
+    r05_recognition_impossible(); 
+
+  if (R05_DATATAG_CHAR != shm->tag)
     r05_recognition_impossible();
+  
+  char home[2];
+  home[0] = shm->info.char_;
+  home[1] = '\0';
+  
+  /* (e.Color) (e.Nationality) (e.Cigarettes) (e.Animal) */
+  struct r05_node *tobj_b = shm->next, *tobj_e;
+  struct r05_node *obj_b, *obj_e;
+
+#define OBJECT_MAX 64
+  char object[5][OBJECT_MAX + 1];
+  int object_len[5];
+  
+  for (int i = 0; i < 4; i++)
+  {
+    if (tobj_b == arg_end)
+     r05_recognition_impossible(); 
+
+    if (R05_DATATAG_OPEN_BRACKET != tobj_b->tag)
+      r05_recognition_impossible();
+  
+    tobj_e = tobj_b->info.link;
+
+    r05_prepare_argument(&obj_b, &obj_e, tobj_b->prev, tobj_e);
+    object_len[i] = r05_read_chars(object[i], OBJECT_MAX, &obj_b, &obj_e);
+    object[i][object_len[i]] = '\0';
+
+    if (object_len[i] == 0)
+      r05_recognition_impossible();
+
+    if (!r05_empty_seq(obj_b, obj_e))
+    {
+      struct r05_node *p = obj_b;
+    
+      while (p != obj_e->next && p->tag == R05_DATATAG_CHAR)
+        p = p->next;
+
+      if (p == obj_e->next)
+        r05_builtin_error("very long objectname");
+      else
+        r05_recognition_impossible();
+    }
+
+    tobj_b = tobj_e->next;
+  }
+  
+  /* e.Drink */
+
+  r05_prepare_argument(&obj_b, &obj_e, tobj_e->prev, arg_end);
+  object_len[4] = r05_read_chars(object[4], OBJECT_MAX, &obj_b, &obj_e);
+  object[4][object_len[4]] = '\0';
+
+  if (object_len[4] == 0)
+    r05_recognition_impossible();
+
+  if (!r05_empty_seq(obj_b, obj_e))
+  {
+    struct r05_node *p = obj_b;
+    
+    while (p != obj_e->next && p->tag == R05_DATATAG_CHAR)
+      p = p->next;
+
+    if (p == obj_e->next)
+      r05_builtin_error("very long objectname");
+    else
+      r05_recognition_impossible();
+  }
+
+#undef OBJECT_MAX
 
   r05_reset_allocator();
 
   gtk_tree_store_append(store, &child_iter, &parent_iter);
   gtk_tree_store_set(store, &child_iter, 
-                    COLUMN_HOME, "Dark Side of the Moon",
-                    COLUMN_COLOR, "Pink Floyd",
-                    COLUMN_NATIONALITY, "B000024D4P",
-                    COLUMN_CIGARETTES, "Dark Side of the Moon",
-                    COLUMN_ANIMAL, "Pink Floyd",
-                    COLUMN_DRINK, "B000024D4P",
+                    COLUMN_HOME, home,
+                    COLUMN_COLOR, object[0],
+                    COLUMN_NATIONALITY, object[1],
+                    COLUMN_CIGARETTES, object[2],
+                    COLUMN_ANIMAL, object[3],
+                    COLUMN_DRINK, object[4],
                     -1);
 
   r05_splice_from_freelist(arg_begin);

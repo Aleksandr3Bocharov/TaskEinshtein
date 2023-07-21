@@ -605,12 +605,12 @@ DoMapTable {
     (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
   ) =
     <TreeSolveTable
-/*      (<Symb s.Home>)
+      <Symb s.Home>
       (<ObjectText e.Color>)
       (<ObjectText e.Nationality>)
       (<ObjectText e.Cigarettes>)
       (<ObjectText e.Animal>)
-      <ObjectText e.Drink> */
+      <ObjectText e.Drink>
     >
 }
 
