@@ -1,7 +1,7 @@
 * Copyright 2023 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2023-07-19
+* 2023-07-26
 * https://github.com/Aleksandr3Bocharov/TaskEinshtein
 
 /*
@@ -86,10 +86,9 @@ Help {
 <Rule s.Rule> == e.Rule
 
 s.Rule ::= s.Number
-e.Rule ::= s.Predicate (s.Category s.Object) (s.Category s.Object) | Fish
+e.Rule ::= s.Predicate e.Object e.Object | Fish
 s.Predicate ::= Member | Nextto  | Near
-s.Category ::= Color | Nationality | Cigarettes | Animal | Drink 
-s.Object ::= s.Color | s.Nationality | s.Cigarretes | s.Animal | s.Drink
+e.Object ::= Color s.Color | Nationality s.Nationality | Cigarettes s.Cigarettes | Animal s.Animal | Drink s.Drink 
 s.Color ::= Yellow | Blue | Red | Green | White
 s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
 s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
@@ -100,49 +99,49 @@ s.Drink ::= Water | Tea | Milk | Coffee | Beer
 Rule {
   /* 1. Англичанин живет в красном доме. */
   1 =
-    Member (Color Red) (Nationality Englishman);
+    Member Color Red Nationality Englishman;
   /* 2. У шведа есть собака. */
   2 =
-    Member (Nationality Shwed) (Animal Dog);
+    Member Nationality Shwed Animal Dog;
   /* 3. Датчанин пьет чай. */
   3 =
-    Member (Nationality Danish) (Drink Tea);
+    Member Nationality Danish Drink Tea;
   /* 4. Зеленый дом стоит слева от белого. */
   4 =
-    Nextto (Color Green) (Color White);
+    Nextto Color Green Color White;
   /* 5. Обитатель зеленого дома пьет кофе. */
   5 =
-    Member (Color Green) (Drink Coffee);
+    Member Color Green Drink Coffee;
   /* 6. Человек, который курит Pall Mall, держит птицу. */
   6 =
-    Member (Cigarettes PallMall) (Animal Bird);
+    Member Cigarettes PallMall Animal Bird;
   /* 7. Обитатель среднего дома пьет молоко. */
   7 =
-    Member (Home 3) (Drink Milk);
+    Member Home 3 Drink Milk;
   /* 8. Обитатель желтого дома курит Dunhill. */
   8 =
-    Member (Color Yellow) (Cigarettes Dunhill);
+    Member Color Yellow Cigarettes Dunhill;
   /* 9. Норвежец живет в первом доме. */
   9 =
-    Member (Home 1) (Nationality Norwegian);
+    Member Home 1 Nationality Norwegian;
   /* 10. Курильщик Marlboro живет возле того, у кого есть кошка. */
   10 =
-    Near (Cigarettes Marlboro) (Animal Cat);
+    Near Cigarettes Marlboro Animal Cat;
   /* 11. Человек, у которого есть конь, живет возле того, кто курит Dunhill. */
   11 =
-    Near (Animal Horse) (Cigarettes Dunhill);
+    Near Animal Horse Cigarettes Dunhill;
   /* 12. Курильщик Winfield пьет пиво. */
   12 =
-    Member (Cigarettes Winfield) (Drink Beer);
+    Member Cigarettes Winfield Drink Beer;
   /* 13. Норвежец живет возле голубого дома. */
   13 =
-    Near (Nationality Norwegian) (Color Blue);
+    Near Nationality Norwegian Color Blue;
   /* 14. Немец курит Rothmans. */
   14 =
-    Member (Nationality German) (Cigarettes Rothmans);
+    Member Nationality German Cigarettes Rothmans;
   /* 15. Курильщик Marlboro живет по соседству с человеком, который пьет воду. */
   15 =
-    Near (Cigarettes Marlboro) (Drink Water);
+    Near Cigarettes Marlboro Drink Water;
   /* 16. Рыба - пятое животное. */
   16 =
     Fish    
@@ -292,11 +291,11 @@ s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
 e.exTable ::= e.Table | Impossible
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= Yellow | Blue | Red | Green | White | '???'
 e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
 e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
@@ -343,11 +342,11 @@ Solve {
 e.Rules ::= s.Rule+
 s.Rule ::= s.NUMBER
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= Yellow | Blue | Red | Green | White | '???'
 e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
 e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
@@ -398,21 +397,20 @@ MinRule {
 
 <ApplyRule e.Rule e.Table> ==
 
-e.Rule ::= s.Predicate (s.Category s.Object) (s.Category s.Object) | Fish
+e.Rule ::= s.Predicate e.Object e.Object | Fish
 s.Predicate ::= Member | Nextto  | Near
-s.Category ::= Color | Nationality | Cigarettes | Animal | Drink 
-s.Object ::= s.Color | s.Nationality | s.Cigarretes | s.Animal | s.Drink
+e.Object ::= Color s.Color | Nationality s.Nationality | Cigarettes s.Cigarettes | Animal s.Animal | Drink s.Drink 
 s.Color ::= Yellow | Blue | Red | Green | White
 s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed
 s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield
 s.Animal ::= Cat | Horse | Bird | Fish | Dog
 s.Drink ::= Water | Tea | Milk | Coffee | Beer
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= s.Color | '???'
 e.Nationality ::= s.Nationality | '???'
 e.Cigarettes ::= s.Cigarettes | '???'
@@ -422,95 +420,95 @@ e.Drink ::= s.Drink | '???'
 */
 ApplyRule {
   /* Member - 2 объекта в одном доме */
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;   
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E)>;   
+  Member s.Category1 s.Object1 s.Category2 s.Object2
   e.Table,
-  <Exist (s.Category1 s.Object1) e.Table>: True,
-  <Exist (s.Category2 s.Object2) e.Table>: True =
+  <Exist s.Category1 s.Object1 e.Table>: True,
+  <Exist s.Category2 s.Object2 e.Table>: True =
     ; 
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 '???') e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;  
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.OtherObject2) e.Home-E) e.Table-E =
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 '???' e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E)>;  
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.OtherObject2 e.Home-E) e.Table-E =
     ;    
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)>;
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 s.OtherObject1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E =
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 '???' e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E)>;
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 s.OtherObject1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E =
     ;  
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 '???') e.Home-M (s.Category2 '???') e.Home-E) e.Table-E,
+  Member s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 '???' e.Home-M s.Category2 '???' e.Home-E) e.Table-E,
   <Rp RuleTables '='
     <Cp RuleTables>
-    (e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-M (s.Category2 s.Object2) e.Home-E) e.Table-E)
+    (e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-M s.Category2 s.Object2 e.Home-E) e.Table-E)
   >: False =
     ;
-  Member (s.Category1 s.Object1) (s.Category2 s.Object2)
+  Member s.Category1 s.Object1 s.Category2 s.Object2
   e.Table =
     ;
   /* Nextto - 1 объект в доме слева дома 2 объекта */
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;   
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E)>;   
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
   e.Table,
-  <Exist (s.Category1 s.Object1) e.Table>: True,
-  <Exist (s.Category2 s.Object2) e.Table>: True =
+  <Exist s.Category1 s.Object1 e.Table>: True,
+  <Exist s.Category2 s.Object2 e.Table>: True =
     ; 
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;  
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 s.OtherObject1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E =
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 '???' e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E)>;  
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 s.OtherObject1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E =
     ;
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  (e.Home-B (s.Category2 s.Object2) e.Home-E) e.Table-E =
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  (e.Home-B s.Category2 s.Object2 e.Home-E) e.Table-E =
     ;      
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E =
-    <Rp RuleTables '=' (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>;
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.OtherObject2) e.HomeR-E) e.Table-E =
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 '???' e.HomeR-E) e.Table-E =
+    <Rp RuleTables '=' (e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E)>;
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.OtherObject2 e.HomeR-E) e.Table-E =
     ;
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.Home-B (s.Category1 s.Object1) e.Home-E) =
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.Home-B s.Category1 s.Object1 e.Home-E) =
     ;  
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
-  e.Table-B (e.HomeL-B (s.Category1 '???') e.HomeL-E) (e.HomeR-B (s.Category2 '???') e.HomeR-E) e.Table-E,
-  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B (s.Category1 s.Object1) e.HomeL-E) (e.HomeR-B (s.Category2 s.Object2) e.HomeR-E) e.Table-E)>: False =
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
+  e.Table-B (e.HomeL-B s.Category1 '???' e.HomeL-E) (e.HomeR-B s.Category2 '???' e.HomeR-E) e.Table-E,
+  <Rp RuleTables '=' <Cp RuleTables> (e.Table-B (e.HomeL-B s.Category1 s.Object1 e.HomeL-E) (e.HomeR-B s.Category2 s.Object2 e.HomeR-E) e.Table-E)>: False =
     ;
-  Nextto (s.Category1 s.Object1) (s.Category2 s.Object2)
+  Nextto s.Category1 s.Object1 s.Category2 s.Object2
   e.Table =
     ;
   /* Near - 2 объекта в соседних домах */
-  Near (s.Category1 s.Object1) (s.Category2 s.Object2)
+  Near s.Category1 s.Object1 s.Category2 s.Object2
   e.Table =
-    <ApplyRule Nextto (s.Category1 s.Object1) (s.Category2 s.Object2) e.Table>
+    <ApplyRule Nextto s.Category1 s.Object1 s.Category2 s.Object2 e.Table>
     <Br RuleTablesTemp '=' <Cp RuleTables>>
     <Rp RuleTables '='>
-    <ApplyRule Nextto (s.Category2 s.Object2) (s.Category1 s.Object1) e.Table>
+    <ApplyRule Nextto s.Category2 s.Object2 s.Category1 s.Object1 e.Table>
     <Rp RuleTables '=' <Dg RuleTablesTemp> <Cp RuleTables>>;
   /* Fish - рыба - пятое животное */
   Fish
-  e.Table-B (e.Home-B (Animal '???') e.Home-E) e.Table-E =
-    e.Table-B (e.Home-B (Animal Fish) e.Home-E) e.Table-E
+  e.Table-B (e.Home-B Animal '???' e.Home-E) e.Table-E =
+    e.Table-B (e.Home-B Animal Fish e.Home-E) e.Table-E
 }
 
 /*
 
-<Exist t.Object e.Table> == True | False
+<Exist e.Object e.Table> == True | False
 
-t.Object ::= (Color s.Color) | (Nationality s.Nationality) | (Cigarettes s.Cigarettes) | (Animal s.Animal) | (Drink s.Drink) 
+e.Object ::= Color s.Color | Nationality s.Nationality | Cigarettes s.Cigarettes | Animal s.Animal | Drink s.Drink 
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= s.Color | '???'
 s.Color ::= Yellow | Blue | Red | Green | White
 e.Nationality ::= s.Nationality | '???'
@@ -524,32 +522,32 @@ s.Drink ::= Water | Tea | Milk | Coffee | Beer
 
 */
 Exist {
-  t.Object e.Table-B (e.Home-B t.Object e.Home-E) e.Table-E =
+  s.Category s.Object e.Table-B (e.Home-B s.Category s.Object e.Home-E) e.Table-E =
     True;
-  t.Object e.Table =
+  s.Category s.Object e.Table =
     False  
 }
 
 /*
 
-<Answer e.Table> == e.Object
+<Answer e.Table> == e.NationalityText
 
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color s.Color) (Nationality s.Nationality) (Cigarettes s.Cigarettes) (Animal s.Animal) (Drink s.Drink)
-e.Home2 ::= (Home 2) (Color s.Color) (Nationality s.Nationality) (Cigarettes s.Cigarettes) (Animal s.Animal) (Drink s.Drink)
-e.Home3 ::= (Home 3) (Color s.Color) (Nationality s.Nationality) (Cigarettes s.Cigarettes) (Animal s.Animal) (Drink s.Drink)
-e.Home4 ::= (Home 4) (Color s.Color) (Nationality s.Nationality) (Cigarettes s.Cigarettes) (Animal s.Animal) (Drink s.Drink)
-e.Home5 ::= (Home 5) (Color s.Color) (Nationality s.Nationality) (Cigarettes s.Cigarettes) (Animal s.Animal) (Drink s.Drink)
+e.Home1 ::= Home 1 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Animal s.Animal Drink s.Drink
+e.Home2 ::= Home 2 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Animal s.Animal Drink s.Drink
+e.Home3 ::= Home 3 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Animal s.Animal Drink s.Drink
+e.Home4 ::= Home 4 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Animal s.Animal Drink s.Drink
+e.Home5 ::= Home 5 Color s.Color Nationality s.Nationality Cigarettes s.Cigarettes Animal s.Animal Drink s.Drink
 s.Color ::= Yellow | Blue | Red | Green | White
 s.Nationality ::= Norwegian | Danish | Englishman | German | Shwed 
 s.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield 
 s.Animal ::= Cat | Horse | Bird | Fish | Dog 
 s.Drink ::= Water | Tea | Milk | Coffee | Beer 
-e.Object ::= 'Норвежец'  | 'Датчанин'  |  'Англичанин' | 'Немец' | 'Швед'
+e.NationalityText ::= 'Норвежец'  | 'Датчанин'  |  'Англичанин' | 'Немец' | 'Швед'
 
 */
 Answer {
-  e.Table-B (e.Home-B (Nationality s.Nationality) e.Home-M (Animal Fish) e.Home-E) e.Table-E = 
+  e.Table-B (e.Home-B Nationality s.Nationality e.Home-M Animal Fish e.Home-E) e.Table-E = 
     <ObjectText s.Nationality>
 }    
 
@@ -562,11 +560,11 @@ s.Rules ::= s.Rule*
 s.Rule ::= s.NUMBER
 e.Tables ::= (e.Table)*
 e.Table ::= (e.Home1) (e.Home2) (e.Home3) (e.Home4) (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= Yellow | Blue | Red | Green | White | '???'
 e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
 e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
@@ -586,11 +584,11 @@ DoMapSolve {
 <DoMapTable t.Table> ==
 
 t.Table ::= (e.Home1) | (e.Home2) | (e.Home3) | (e.Home4) | (e.Home5)
-e.Home1 ::= (Home 1) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home2 ::= (Home 2) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home3 ::= (Home 3) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home4 ::= (Home 4) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-e.Home5 ::= (Home 5) (Color e.Color) (Nationality e.Nationality) (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
+e.Home1 ::= Home 1 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home2 ::= Home 2 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home3 ::= Home 3 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home4 ::= Home 4 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
+e.Home5 ::= Home 5 Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink
 e.Color ::= Yellow | Blue | Red | Green | White | '???'
 e.Nationality ::= Norwegian | Danish | Englishman | German | Shwed | '???'
 e.Cigarettes ::= Dunhill | Rothmans | PallMall | Marlboro | Winfield | '???'
@@ -600,10 +598,7 @@ e.Drink ::= Water | Tea | Milk | Coffee | Beer | '???'
 */
 
 DoMapTable {
-  (
-    (Home s.Home) (Color e.Color) (Nationality e.Nationality)
-    (Cigarettes e.Cigarettes) (Animal e.Animal) (Drink e.Drink)
-  ) =
+  (Home s.Home Color e.Color Nationality e.Nationality Cigarettes e.Cigarettes Animal e.Animal Drink e.Drink) =
     <TreeSolveTable
       <Symb s.Home>
       (<ObjectText e.Color>)
@@ -622,11 +617,11 @@ $ENTRY Go {
   <Br StepsBack '=' 0>
   <Solve    
     (0 (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15) '='
-      ((Home 1) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
-      ((Home 2) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
-      ((Home 3) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
-      ((Home 4) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
-      ((Home 5) (Color '???') (Nationality '???') (Cigarettes '???') (Animal '???') (Drink '???'))
+      (Home 1 Color '???' Nationality '???' Cigarettes '???' Animal '???' Drink '???')
+      (Home 2 Color '???' Nationality '???' Cigarettes '???' Animal '???' Drink '???')
+      (Home 3 Color '???' Nationality '???' Cigarettes '???' Animal '???' Drink '???')
+      (Home 4 Color '???' Nationality '???' Cigarettes '???' Animal '???' Drink '???')
+      (Home 5 Color '???' Nationality '???' Cigarettes '???' Animal '???' Drink '???')
     )
   >: e.Solve-B (16 () '=' e.Table) =
     <MessageBox 'Вопрос: Чья рыба?\nОтвет: ' <Answer e.Table> ' держит рыбу.'>
