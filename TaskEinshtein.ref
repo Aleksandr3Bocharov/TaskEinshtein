@@ -48,7 +48,7 @@ https://docs.gtk.org/gtk3/
 *$FROM LibraryEx
 $EXTERN Map, Inc;
 
-*$FROM taskeinshteinc
+*$FROM libraryc
 $EXTERN GTKInit, MessageBox, TreeSolveNew, TreeSolveView, TreeSolveRule, TreeSolveTable;
 
 * Вывод справки
@@ -622,6 +622,6 @@ $ENTRY Go {
     <TreeSolveView>
     <MessageBox
       'Количество шагов без возвратов: ' <Symb <Dg Steps>> '.\n'
-      'Количество шагов с возвратами: ' <Symb <Dg StepsBack>> '.\n'
+      'Количество шагов с возвратами: ' <Symb <Dg StepsBack>> '.'
     >
 }
