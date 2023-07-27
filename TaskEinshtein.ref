@@ -48,7 +48,7 @@ https://docs.gtk.org/gtk3/
 *$FROM LibraryEx
 $EXTERN Map, Inc;
 
-*$FROM libraryc
+*$FROM taskeinshteinc
 $EXTERN GTKInit, MessageBox, TreeSolveNew, TreeSolveView, TreeSolveRule, TreeSolveTable;
 
 * Вывод справки
