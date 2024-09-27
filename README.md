@@ -1,9 +1,7 @@
 # Задача Эйнштейна
-Программа "TaskEinshtein" написана на языке программирования Рефал-05.
-https://github.com/Mazdaywik/Refal-05
+Программа "TaskEinshtein" написана на языке программирования [Рефал-05](https://github.com/Mazdaywik/Refal-05).
 
-Программа "TaskEinshtein" использует библиотеку GTK3.
-https://docs.gtk.org/gtk3/
+Программа "TaskEinshtein" использует библиотеку [GTK3](https://docs.gtk.org/gtk3/).
 
 Решение задачи Эйнштейна на Рефал-05.
 
